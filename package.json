@@ -1,0 +1,13 @@
+{
+  "name": "stock-daily",
+  "version": "1.0.0",
+  "description": "每日A股潜力股推荐 - AI驱动的股票分析推荐页面",
+  "type": "module",
+  "scripts": {
+    "update": "node scripts/daily-update.js",
+    "dev": "npx serve ."
+  },
+  "dependencies": {
+    "node-fetch": "^3.3.2"
+  }
+}
