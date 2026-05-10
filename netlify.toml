@@ -6,9 +6,8 @@
   DEEPSEEK_API_KEY = "sk-2da67e882762416b958967d06ce1e500"
 
 [functions]
-  "scheduled-update" = {
+  [functions."scheduled-update"]
     schedule = "0 10 * * 1-5"
-  }
 
 [[headers]]
   for = "/*"
