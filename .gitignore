@@ -3,3 +3,6 @@ node_modules/
 *.log
 .DS_Store
 .omc/
+
+# Local Netlify folder
+.netlify

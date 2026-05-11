@@ -1,4 +1,5 @@
 import fetch from 'node-fetch';
+import { HttpsProxyAgent } from 'https-proxy-agent';
 import fs from 'fs';
 import path from 'path';
 import { fileURLToPath } from 'url';
@@ -10,16 +11,26 @@ const OUTPUT_FILE = path.join(DATA_DIR, 'recommendations.json');
 const DEEPSEEK_API_KEY = process.env.DEEPSEEK_API_KEY || 'sk-2da67e882762416b958967d06ce1e500';
 const DEEPSEEK_URL = 'https://api.deepseek.com/chat/completions';
 
+// 代理配置
+const proxyUrl = process.env.https_proxy || process.env.HTTPS_PROXY || 'http://127.0.0.1:7890';
+const proxyAgent = proxyUrl ? new HttpsProxyAgent(proxyUrl) : null;
+
 // 东方财富 API 基础 URL
 const EM_BASE = 'https://push2.eastmoney.com/api/qt/clist/get';
 
 // ============ 数据获取函数 ============
 
+function buildFetchOptions() {
+  const opts = {
+    headers: { 'User-Agent': 'Mozilla/5.0', 'Referer': 'https://quote.eastmoney.com/' }
+  };
+  if (proxyAgent) opts.agent = proxyAgent;
+  return opts;
+}
+
 async function fetchFromEastMoney(params) {
   const url = `${EM_BASE}?${new URLSearchParams(params)}`;
-  const res = await fetch(url, {
-    headers: { 'User-Agent': 'Mozilla/5.0', 'Referer': 'https://quote.eastmoney.com/' }
-  });
+  const res = await fetch(url, buildFetchOptions());
   const json = await res.json();
   return json?.data?.diff || [];
 }
@@ -76,9 +87,7 @@ async function fetchDragonTiger() {
 async function fetchMarketNews() {
   try {
     const url = 'https://np-listapi.eastmoney.com/comm/web/getNewsByColumnId?columnId=102&pageNum=1&pageSize=20';
-    const res = await fetch(url, {
-      headers: { 'User-Agent': 'Mozilla/5.0', 'Referer': 'https://finance.eastmoney.com/' }
-    });
+    const res = await fetch(url, buildFetchOptions());
     const json = await res.json();
     return (json?.data?.list || []).slice(0, 15).map(n => ({
       title: n.title || n.title_show || '',
@@ -187,7 +196,7 @@ ${newsTitles.map((t, i) => `${i + 1}. ${t}`).join('\n')}
 }
 
 async function callDeepSeek(prompt) {
-  const res = await fetch(DEEPSEEK_URL, {
+  const opts = {
     method: 'POST',
     headers: {
       'Content-Type': 'application/json',
@@ -202,7 +211,10 @@ async function callDeepSeek(prompt) {
       temperature: 0.7,
       max_tokens: 4096
     })
-  });
+  };
+  if (proxyAgent) opts.agent = proxyAgent;
+
+  const res = await fetch(DEEPSEEK_URL, opts);
 
   if (!res.ok) {
     const err = await res.text();
