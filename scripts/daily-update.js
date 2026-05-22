@@ -65,7 +65,13 @@ const EM_BASE = 'https://push2.eastmoney.com/api/qt/clist/get';
 async function fetchFromEastMoney(params) {
   const url = `${EM_BASE}?${new URLSearchParams(params)}`;
   const res = await fetch(url, buildFetchOptions());
-  const json = await res.json();
+  const text = await res.text();
+  // 东方财富可能拦截云服务器IP，返回HTML而非JSON
+  if (!text.trim().startsWith('{')) {
+    console.warn(`  ⚠️ 东方财富返回非JSON (长度${text.length})，跳过此数据源`);
+    return [];
+  }
+  const json = JSON.parse(text);
   return json?.data?.diff || [];
 }
 
