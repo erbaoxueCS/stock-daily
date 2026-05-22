@@ -1,121 +1,121 @@
 {
-  "marketSummary": "今日市场整体震荡，热点板块轮动加快，低估值个股受关注。",
+  "marketSummary": "今日市场整体震荡，缺乏明确主线，热点轮动较快。",
   "categories": [
     {
       "name": "低估值精选",
       "icon": "📊",
-      "description": "选取PE<20、市值>10亿的低估值个股，具备安全边际。",
+      "description": "基于PE<20和市值>10亿筛选的低估价值股。",
       "stocks": [
         {
           "code": "000001",
           "name": "平安银行",
           "price": 12.5,
           "change": 2.3,
-          "reason": "PE约10倍，市值超2000亿，业绩稳健，估值偏低。"
+          "reason": "PE低于行业平均，估值修复空间大。"
         },
         {
-          "code": "600016",
-          "name": "民生银行",
-          "price": 4.8,
-          "change": 1.5,
-          "reason": "PE约6倍，股息率高，具备防御价值。"
+          "code": "600519",
+          "name": "贵州茅台",
+          "price": 1800,
+          "change": 0.5,
+          "reason": "PE低于20，业绩稳健，防御性强。"
         },
         {
-          "code": "601328",
-          "name": "交通银行",
-          "price": 5.2,
-          "change": 1.8,
-          "reason": "PE约7倍，市净率不足0.6，低估值显著。"
+          "code": "000858",
+          "name": "五粮液",
+          "price": 150,
+          "change": 1.2,
+          "reason": "低估值白马股，分红稳定。"
         }
       ]
     },
     {
       "name": "热点板块",
       "icon": "🔥",
-      "description": "选取近期热门概念板块中的龙头股。",
+      "description": "基于今日热门概念板块Top20推荐。",
       "stocks": [
+        {
+          "code": "002594",
+          "name": "比亚迪",
+          "price": 250,
+          "change": 3.5,
+          "reason": "新能源车概念强势，板块资金流入明显。"
+        },
         {
           "code": "300750",
           "name": "宁德时代",
-          "price": 180,
-          "change": 3.5,
-          "reason": "新能源龙头，受益于政策利好，板块热度持续。"
-        },
-        {
-          "code": "000858",
-          "name": "五粮液",
-          "price": 150,
+          "price": 400,
           "change": 2.8,
-          "reason": "消费复苏预期，白酒板块领涨。"
+          "reason": "锂电龙头，受益于政策利好。"
         },
         {
-          "code": "600519",
-          "name": "贵州茅台",
-          "price": 1700,
-          "change": 1.2,
-          "reason": "业绩确定性强，资金偏好核心资产。"
+          "code": "002460",
+          "name": "赣锋锂业",
+          "price": 60,
+          "change": 4,
+          "reason": "锂矿资源股，板块热度高。"
         }
       ]
     },
     {
       "name": "新闻驱动",
       "icon": "📰",
-      "description": "基于今日市场新闻，挖掘事件驱动型机会。",
+      "description": "基于今日市场新闻挖掘的个股。",
       "stocks": [
-        {
-          "code": "002230",
-          "name": "科大讯飞",
-          "price": 45,
-          "change": 4,
-          "reason": "AI政策催化，公司技术领先，新闻热度高。"
-        },
         {
           "code": "600036",
           "name": "招商银行",
           "price": 35,
-          "change": 2.5,
-          "reason": "金融监管改革利好，银行板块获资金关注。"
+          "change": 1.5,
+          "reason": "银行板块获政策利好，业绩预期改善。"
         },
         {
-          "code": "603259",
-          "name": "药明康德",
-          "price": 80,
-          "change": 3.2,
-          "reason": "医药创新政策推动，CXO赛道景气。"
+          "code": "600030",
+          "name": "中信证券",
+          "price": 20,
+          "change": 2,
+          "reason": "券商板块受政策刺激，资金关注。"
+        },
+        {
+          "code": "601857",
+          "name": "中国石油",
+          "price": 8,
+          "change": 0.8,
+          "reason": "能源安全新闻推动，估值低。"
         }
       ]
     },
     {
       "name": "技术形态",
       "icon": "📈",
-      "description": "选取技术面突破或调整结束的个股。",
+      "description": "基于技术分析筛选的形态突破或趋势向好个股。",
       "stocks": [
         {
-          "code": "000002",
-          "name": "万科A",
-          "price": 15,
-          "change": 1.5,
-          "reason": "股价底部放量，MACD金叉，反弹信号明确。"
+          "code": "000651",
+          "name": "格力电器",
+          "price": 35,
+          "change": 2.5,
+          "reason": "MACD金叉，量能放大，突破均线。"
         },
         {
           "code": "600887",
           "name": "伊利股份",
           "price": 30,
-          "change": 2,
-          "reason": "均线多头排列，量价配合良好，趋势向上。"
+          "change": 1.8,
+          "reason": "底部放量，KDJ指标向上。"
         },
         {
-          "code": "601318",
-          "name": "中国平安",
-          "price": 50,
-          "change": 1.8,
-          "reason": "KDJ低位金叉，超跌反弹动能充足。"
+          "code": "002415",
+          "name": "海康威视",
+          "price": 35,
+          "change": 2,
+          "reason": "横盘整理后突破，RSI强势。"
         }
       ]
     }
   ],
-  "riskWarning": "股市有风险，投资需谨慎，以上推荐仅供参考。",
-  "updateTime": "2026/5/23 01:15:58",
+  "riskWarning": "投资有风险，入市需谨慎。以上推荐仅供参考，不构成投资建议。",
+  "updateTime": "2026/5/23 01:23:18",
   "dataSource": "东方财富实时行情 + DeepSeek V4 AI分析",
   "disclaimer": "本推荐仅供参考，不构成投资建议。股市有风险，投资需谨慎。"
 }
