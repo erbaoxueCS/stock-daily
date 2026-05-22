@@ -11,14 +11,18 @@ const OUTPUT_FILE = path.join(DATA_DIR, 'recommendations.json');
 const DEEPSEEK_API_KEY = process.env.DEEPSEEK_API_KEY || 'sk-2da67e882762416b958967d06ce1e500';
 const DEEPSEEK_URL = 'https://api.deepseek.com/chat/completions';
 
-// 代理配置
-const proxyUrl = process.env.https_proxy || process.env.HTTPS_PROXY || 'http://127.0.0.1:7890';
-const proxyAgent = proxyUrl ? new HttpsProxyAgent(proxyUrl) : null;
+// 代理配置：自动检测，优先直连，失败时尝试环境变量代理
+let proxyAgent = null;
+const envProxy = process.env.https_proxy || process.env.HTTPS_PROXY;
 
-// 东方财富 API 基础 URL
-const EM_BASE = 'https://push2.eastmoney.com/api/qt/clist/get';
-
-// ============ 数据获取函数 ============
+async function testProxy(url, agent) {
+  const opts = { headers: { 'User-Agent': 'Mozilla/5.0' }, timeout: 3000 };
+  if (agent) opts.agent = agent;
+  try {
+    const res = await fetch(url, opts);
+    return res.ok;
+  } catch { return false; }
+}
 
 function buildFetchOptions() {
   const opts = {
@@ -27,6 +31,36 @@ function buildFetchOptions() {
   if (proxyAgent) opts.agent = proxyAgent;
   return opts;
 }
+
+// 初始化：自动选择可用代理
+async function initProxy() {
+  const testUrl = 'https://push2.eastmoney.com/api/qt/clist/get?pn=1&pz=1&po=0&np=1&ut=bd1d9ddb04089700cf9c27f6f7426281&fltt=2&invt=2&fid=f3&fs=m:0+t:6,m:0+t:80,m:1+t:2,m:1+t:23&fields=f14';
+  console.log('🔌 检测网络连接...');
+
+  // 先尝试直连
+  if (await testProxy(testUrl, null)) {
+    console.log('  ✅ 直连可用');
+    proxyAgent = null;
+    return;
+  }
+
+  // 尝试环境变量代理
+  if (envProxy) {
+    const agent = new HttpsProxyAgent(envProxy);
+    if (await testProxy(testUrl, agent)) {
+      console.log(`  ✅ 代理可用: ${envProxy}`);
+      proxyAgent = agent;
+      return;
+    }
+  }
+
+  console.log('  ⚠️ 直连和代理均不可用，将使用默认配置');
+}
+
+// 东方财富 API 基础 URL
+const EM_BASE = 'https://push2.eastmoney.com/api/qt/clist/get';
+
+// ============ 数据获取函数 ============
 
 async function fetchFromEastMoney(params) {
   const url = `${EM_BASE}?${new URLSearchParams(params)}`;
@@ -116,21 +150,19 @@ async function fetchSectorLeaders(sectorCode) {
 // ============ AI 分析 ============
 
 function buildAnalysisPrompt(topMovers, lowPE, hotSectors, dragonTiger, news) {
-  // 压缩数据 - 只取关键字段
   const topMoversSample = topMovers.slice(0, 100).map(s => ({
-    代码: s.f12, 名称: s.f14, 最新价: s.f2, 涨跌幅: s.f3 + '%',
-    PE: s.f9, PB: s.f23, 总市值: (s.f20 / 1e8).toFixed(1) + '亿',
-    换手率: s.f8 + '%', 量比: s.f10
+    code: s.f12, name: s.f14, price: s.f2, change: s.f3,
+    pe: s.f9, pb: s.f23, mcap: +(s.f20 / 1e8).toFixed(1), turnover: s.f8
   }));
 
   const lowPESample = lowPE.filter(s => parseFloat(s.f9) > 0 && parseFloat(s.f9) < 20 && parseFloat(s.f20) > 10e8)
     .slice(0, 50).map(s => ({
-      代码: s.f12, 名称: s.f14, PE: s.f9, PB: s.f23, 涨跌幅: s.f3 + '%',
-      总市值: (s.f20 / 1e8).toFixed(1) + '亿'
+      code: s.f12, name: s.f14, pe: s.f9, pb: s.f23, change: s.f3,
+      mcap: +(s.f20 / 1e8).toFixed(1)
     }));
 
   const hotSectorSample = hotSectors.slice(0, 20).map(s => ({
-    代码: s.f12, 名称: s.f14, 涨跌幅: s.f3 + '%', 上涨家数: s.f104, 下跌家数: s.f105
+    code: s.f12, name: s.f14, change: s.f3, up: s.f104, down: s.f105
   }));
 
   const newsTitles = news.slice(0, 10).map(n => n.title);
@@ -138,13 +170,13 @@ function buildAnalysisPrompt(topMovers, lowPE, hotSectors, dragonTiger, news) {
   return `你是一位经验丰富的A股分析师。请根据以下市场数据，推荐今日有潜力的股票。
 
 ## 今日涨幅领先股票 (Top 100)
-${JSON.stringify(topMoversSample, null, 2)}
+${JSON.stringify(topMoversSample)}
 
 ## 低估值股票 (PE<20, 市值>10亿)
-${JSON.stringify(lowPESample, null, 2)}
+${JSON.stringify(lowPESample)}
 
 ## 热门概念板块 (Top 20)
-${JSON.stringify(hotSectorSample, null, 2)}
+${JSON.stringify(hotSectorSample)}
 
 ## 今日市场新闻
 ${newsTitles.map((t, i) => `${i + 1}. ${t}`).join('\n')}
@@ -240,6 +272,9 @@ async function main() {
   console.log('');
 
   try {
+    // 初始化代理
+    await initProxy();
+
     // 并行获取数据
     console.log('📊 获取市场数据...');
     const [topMovers, lowPE, hotSectors, dragonTiger, news] = await Promise.all([
