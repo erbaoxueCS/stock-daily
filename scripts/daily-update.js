@@ -8,8 +8,13 @@ const __dirname = path.dirname(fileURLToPath(import.meta.url));
 const DATA_DIR = path.join(__dirname, '..', 'data');
 const OUTPUT_FILE = path.join(DATA_DIR, 'recommendations.json');
 
-const DEEPSEEK_API_KEY = process.env.DEEPSEEK_API_KEY || 'sk-2da67e882762416b958967d06ce1e500';
+const DEEPSEEK_API_KEY = process.env.DEEPSEEK_API_KEY;
 const DEEPSEEK_URL = 'https://api.deepseek.com/chat/completions';
+
+if (!DEEPSEEK_API_KEY) {
+  console.error('❌ 错误: 未设置 DEEPSEEK_API_KEY 环境变量');
+  process.exit(1);
+}
 
 // 代理配置：自动检测，优先直连，失败时尝试环境变量代理
 let proxyAgent = null;
