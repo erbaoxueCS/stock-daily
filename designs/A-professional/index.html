@@ -1,0 +1,577 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>每日A股潜力推荐 | 专业版</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@400;500;600;700&family=Noto+Sans+SC:wght@400;500;700;900&family=DM+Serif+Display&display=swap" rel="stylesheet">
+<style>
+*,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
+:root{
+  --bg:#0a0e17;
+  --bg-card:#111827;
+  --bg-hover:#1a2332;
+  --border:#1e2d3d;
+  --border-accent:#2a3f5f;
+  --text:#e2e8f0;
+  --text-dim:#64748b;
+  --text-muted:#475569;
+  --red:#ef4444;
+  --red-bg:rgba(239,68,68,0.12);
+  --green:#22c55e;
+  --green-bg:rgba(34,197,94,0.12);
+  --amber:#f59e0b;
+  --amber-bg:rgba(245,158,11,0.12);
+  --blue:#3b82f6;
+  --blue-bg:rgba(59,130,246,0.1);
+  --cyan:#06b6d4;
+  --radius:4px;
+  --font-data:'JetBrains Mono',monospace;
+  --font-ui:'Noto Sans SC',sans-serif;
+  --font-display:'DM Serif Display',serif;
+}
+body{
+  font-family:var(--font-ui);
+  background:var(--bg);
+  color:var(--text);
+  line-height:1.5;
+  min-height:100vh;
+}
+.container{max-width:1400px;margin:0 auto;padding:0 24px}
+
+/* === TICKER BAR === */
+.ticker-bar{
+  background:#0d1117;
+  border-bottom:1px solid var(--border);
+  padding:8px 0;
+  overflow:hidden;
+  position:relative;
+}
+.ticker-inner{
+  display:flex;
+  gap:32px;
+  white-space:nowrap;
+  animation:ticker-scroll 30s linear infinite;
+}
+@keyframes ticker-scroll{
+  0%{transform:translateX(0)}
+  100%{transform:translateX(-50%)}
+}
+.ticker-item{
+  display:inline-flex;
+  align-items:center;
+  gap:8px;
+  font-size:13px;
+  font-family:var(--font-data);
+}
+.ticker-item .name{color:var(--text-dim)}
+.ticker-item .val{color:var(--text);font-weight:600}
+.ticker-item .chg{font-size:12px;font-weight:500}
+.ticker-item .chg.up{color:var(--red)}
+.ticker-item .chg.down{color:var(--green)}
+.ticker-divider{color:var(--border);font-size:16px}
+
+/* === HEADER === */
+.header{
+  background:linear-gradient(180deg,#0d1117 0%,var(--bg) 100%);
+  border-bottom:1px solid var(--border);
+  padding:24px 0;
+}
+.header-inner{
+  display:flex;
+  justify-content:space-between;
+  align-items:center;
+  flex-wrap:wrap;
+  gap:16px;
+}
+.logo{display:flex;align-items:center;gap:12px}
+.logo-icon{
+  width:40px;height:40px;
+  background:linear-gradient(135deg,var(--red),var(--amber));
+  border-radius:8px;
+  display:flex;align-items:center;justify-content:center;
+  font-size:20px;
+}
+.logo h1{
+  font-family:var(--font-display);
+  font-size:1.6rem;
+  color:var(--text);
+  letter-spacing:-0.02em;
+}
+.logo p{font-size:13px;color:var(--text-dim);margin-top:2px}
+.header-meta{
+  display:flex;align-items:center;gap:20px;
+  font-size:13px;font-family:var(--font-data);
+}
+.header-meta .tag{
+  background:var(--blue-bg);
+  border:1px solid rgba(59,130,246,0.3);
+  padding:4px 10px;border-radius:4px;
+  color:var(--blue);font-weight:500;
+}
+.header-meta .time{color:var(--text-dim)}
+
+/* === MARKET SUMMARY === */
+.market-strip{
+  padding:20px 0;
+  border-bottom:1px solid var(--border);
+}
+.market-strip h2{
+  font-size:13px;
+  text-transform:uppercase;
+  letter-spacing:0.08em;
+  color:var(--text-muted);
+  margin-bottom:12px;
+  font-weight:600;
+}
+.market-summary{
+  background:var(--bg-card);
+  border:1px solid var(--border);
+  border-left:3px solid var(--amber);
+  padding:16px 20px;
+  border-radius:var(--radius);
+  font-size:14px;
+  line-height:1.7;
+  color:var(--text);
+}
+
+/* === STATS ROW === */
+.stats-row{
+  display:grid;
+  grid-template-columns:repeat(auto-fit,minmax(180px,1fr));
+  gap:12px;
+  padding:20px 0;
+}
+.stat-card{
+  background:var(--bg-card);
+  border:1px solid var(--border);
+  padding:16px 20px;
+  border-radius:var(--radius);
+}
+.stat-card .label{
+  font-size:11px;
+  text-transform:uppercase;
+  letter-spacing:0.08em;
+  color:var(--text-muted);
+  margin-bottom:6px;
+  font-weight:600;
+}
+.stat-card .value{
+  font-family:var(--font-data);
+  font-size:1.5rem;
+  font-weight:700;
+  color:var(--text);
+}
+.stat-card .sub{
+  font-size:12px;
+  color:var(--text-dim);
+  margin-top:4px;
+  font-family:var(--font-data);
+}
+
+/* === TABS === */
+.tabs-section{padding:24px 0 0}
+.tabs-nav{
+  display:flex;
+  gap:0;
+  border-bottom:1px solid var(--border);
+}
+.tab-btn{
+  display:flex;
+  align-items:center;
+  gap:8px;
+  padding:12px 24px;
+  background:transparent;
+  border:none;
+  color:var(--text-dim);
+  font-family:var(--font-ui);
+  font-size:14px;
+  font-weight:500;
+  cursor:pointer;
+  position:relative;
+  transition:color 0.2s;
+}
+.tab-btn:hover{color:var(--text)}
+.tab-btn.active{color:var(--text)}
+.tab-btn.active::after{
+  content:'';
+  position:absolute;
+  bottom:-1px;left:0;right:0;
+  height:2px;
+  background:var(--blue);
+}
+.tab-btn .count{
+  font-family:var(--font-data);
+  font-size:11px;
+  background:var(--bg-hover);
+  padding:2px 8px;
+  border-radius:10px;
+  color:var(--text-muted);
+}
+.tab-btn.active .count{
+  background:var(--blue-bg);
+  color:var(--blue);
+}
+
+/* === STOCK TABLE === */
+.stock-section{padding:20px 0 40px}
+.section-header{
+  display:flex;
+  justify-content:space-between;
+  align-items:center;
+  margin-bottom:16px;
+}
+.section-header h2{
+  font-size:1.1rem;
+  font-weight:700;
+}
+.section-header .desc{
+  font-size:13px;
+  color:var(--text-dim);
+  margin-top:4px;
+}
+.stock-table{
+  width:100%;
+  border-collapse:collapse;
+}
+.stock-table thead th{
+  font-size:11px;
+  text-transform:uppercase;
+  letter-spacing:0.06em;
+  color:var(--text-muted);
+  font-weight:600;
+  padding:10px 16px;
+  text-align:left;
+  border-bottom:1px solid var(--border);
+}
+.stock-table thead th:last-child,
+.stock-table thead th:nth-child(4),
+.stock-table thead th:nth-child(3){text-align:right}
+.stock-table tbody tr{
+  border-bottom:1px solid var(--border);
+  transition:background 0.15s;
+}
+.stock-table tbody tr:hover{background:var(--bg-hover)}
+.stock-table tbody tr:last-child{border-bottom:none}
+.stock-table td{
+  padding:14px 16px;
+  font-size:14px;
+  vertical-align:top;
+}
+.stock-table td:first-child{
+  font-family:var(--font-data);
+  font-size:13px;
+  color:var(--text-dim);
+  font-weight:500;
+}
+.stock-table .stock-name{
+  font-weight:700;
+  font-size:14px;
+  color:var(--text);
+}
+.stock-table .price{
+  font-family:var(--font-data);
+  font-weight:600;
+  text-align:right;
+  font-size:14px;
+}
+.stock-table .change{
+  font-family:var(--font-data);
+  font-weight:600;
+  text-align:right;
+  padding:4px 10px;
+  border-radius:4px;
+  display:inline-block;
+  font-size:13px;
+}
+.stock-table .change.up{color:var(--red);background:var(--red-bg)}
+.stock-table .change.down{color:var(--green);background:var(--green-bg)}
+.stock-table .change.flat{color:var(--text-dim)}
+.stock-table .reason{
+  color:var(--text-dim);
+  font-size:13px;
+  line-height:1.6;
+  max-width:400px;
+}
+.change-cell{text-align:right}
+
+/* === EMPTY STATE === */
+.empty-state{
+  text-align:center;
+  padding:60px 20px;
+  color:var(--text-muted);
+  font-size:14px;
+}
+
+/* === RISK === */
+.risk-strip{
+  padding:0 0 20px;
+}
+.risk-card{
+  background:var(--amber-bg);
+  border:1px solid rgba(245,158,11,0.2);
+  border-left:3px solid var(--amber);
+  padding:12px 16px;
+  border-radius:var(--radius);
+  font-size:13px;
+  color:var(--amber);
+  display:flex;
+  align-items:center;
+  gap:10px;
+}
+.risk-card::before{
+  content:'⚠';
+  font-size:16px;
+}
+
+/* === FOOTER === */
+.footer{
+  border-top:1px solid var(--border);
+  padding:24px 0;
+  font-size:12px;
+  color:var(--text-muted);
+  display:flex;
+  justify-content:space-between;
+  flex-wrap:wrap;
+  gap:12px;
+}
+.footer span{font-family:var(--font-data)}
+
+/* === RESPONSIVE === */
+@media(max-width:768px){
+  .header-inner{flex-direction:column;align-items:flex-start}
+  .stats-row{grid-template-columns:repeat(2,1fr)}
+  .stock-table{font-size:13px}
+  .stock-table td,.stock-table th{padding:10px 8px}
+  .stock-table .reason{max-width:200px}
+  .tabs-nav{overflow-x:auto}
+  .tab-btn{padding:10px 16px;font-size:13px;white-space:nowrap}
+  .container{padding:0 12px}
+}
+</style>
+</head>
+<body>
+
+<!-- Ticker Bar -->
+<div class="ticker-bar">
+  <div class="ticker-inner" id="ticker">
+    <span class="ticker-item"><span class="name">上证指数</span><span class="val">4112.90</span><span class="chg up">+0.87%</span></span>
+    <span class="ticker-divider">|</span>
+    <span class="ticker-item"><span class="name">深证成指</span><span class="val">13456.78</span><span class="chg up">+1.12%</span></span>
+    <span class="ticker-divider">|</span>
+    <span class="ticker-item"><span class="name">创业板指</span><span class="val">2876.45</span><span class="chg down">-0.32%</span></span>
+    <span class="ticker-divider">|</span>
+    <span class="ticker-item"><span class="name">科创50</span><span class="val">1023.56</span><span class="chg up">+1.56%</span></span>
+    <span class="ticker-divider">|</span>
+    <span class="ticker-item"><span class="name">沪深成交额</span><span class="val">1.82万亿</span></span>
+    <span class="ticker-divider">|</span>
+    <span class="ticker-item"><span class="name">北向资金</span><span class="val">+52.3亿</span><span class="chg up">净流入</span></span>
+    <span class="ticker-divider">|</span>
+    <!-- duplicate for seamless scroll -->
+    <span class="ticker-item"><span class="name">上证指数</span><span class="val">4112.90</span><span class="chg up">+0.87%</span></span>
+    <span class="ticker-divider">|</span>
+    <span class="ticker-item"><span class="name">深证成指</span><span class="val">13456.78</span><span class="chg up">+1.12%</span></span>
+    <span class="ticker-divider">|</span>
+    <span class="ticker-item"><span class="name">创业板指</span><span class="val">2876.45</span><span class="chg down">-0.32%</span></span>
+    <span class="ticker-divider">|</span>
+    <span class="ticker-item"><span class="name">科创50</span><span class="val">1023.56</span><span class="chg up">+1.56%</span></span>
+    <span class="ticker-divider">|</span>
+    <span class="ticker-item"><span class="name">沪深成交额</span><span class="val">1.82万亿</span></span>
+    <span class="ticker-divider">|</span>
+    <span class="ticker-item"><span class="name">北向资金</span><span class="val">+52.3亿</span><span class="chg up">净流入</span></span>
+    <span class="ticker-divider">|</span>
+  </div>
+</div>
+
+<!-- Header -->
+<header class="header">
+  <div class="container">
+    <div class="header-inner">
+      <div class="logo">
+        <div class="logo-icon">📈</div>
+        <div>
+          <h1>每日A股潜力推荐</h1>
+          <p>东方财富实时行情 + DeepSeek V4 AI智能分析</p>
+        </div>
+      </div>
+      <div class="header-meta">
+        <span class="tag" id="dataSource">加载中...</span>
+        <span class="time" id="updateTime">--</span>
+      </div>
+    </div>
+  </div>
+</header>
+
+<!-- Market Summary -->
+<section class="market-strip">
+  <div class="container">
+    <h2>市场概览</h2>
+    <div class="market-summary" id="summary">加载中...</div>
+  </div>
+</section>
+
+<!-- Stats Row -->
+<section class="stats-row container" id="statsRow">
+  <div class="stat-card">
+    <div class="label">推荐总数</div>
+    <div class="value" id="statTotal">--</div>
+    <div class="sub">4个类别</div>
+  </div>
+  <div class="stat-card">
+    <div class="label">平均涨幅</div>
+    <div class="value" id="statAvgChange">--</div>
+    <div class="sub" id="statAvgSub">--</div>
+  </div>
+  <div class="stat-card">
+    <div class="label">涨幅最高</div>
+    <div class="value" id="statTopStock" style="font-size:1.1rem">--</div>
+    <div class="sub" id="statTopSub">--</div>
+  </div>
+  <div class="stat-card">
+    <div class="label">低估值PE</div>
+    <div class="value" id="statLowPE">--</div>
+    <div class="sub">市盈率最低</div>
+  </div>
+</section>
+
+<!-- Tabs -->
+<section class="tabs-section">
+  <div class="container">
+    <nav class="tabs-nav" id="tabsNav"></nav>
+  </div>
+</section>
+
+<!-- Stock Table -->
+<section class="stock-section">
+  <div class="container">
+    <div class="section-header">
+      <div>
+        <h2 id="catTitle">--</h2>
+        <p class="desc" id="catDesc">--</p>
+      </div>
+    </div>
+    <div id="tableContainer"></div>
+  </div>
+</section>
+
+<!-- Risk -->
+<section class="risk-strip">
+  <div class="container">
+    <div class="risk-card" id="riskWarning">加载中...</div>
+  </div>
+</section>
+
+<!-- Footer -->
+<footer class="footer">
+  <div class="container" style="width:100%;display:flex;justify-content:space-between;flex-wrap:wrap;gap:12px">
+    <span>数据来源: <span id="footerSource">东方财富 + DeepSeek V4</span></span>
+    <span>© 2026 每日A股潜力推荐 | 投资有风险，入市需谨慎</span>
+  </div>
+</footer>
+
+<script>
+(function(){
+  let data = null;
+  let activeIdx = 0;
+
+  async function load(){
+    try{
+      const res = await fetch('../data/recommendations.json',{cache:'no-cache'});
+      if(!res.ok) throw new Error(res.status);
+      data = await res.json();
+      render();
+    }catch(e){
+      console.error('Load failed:',e);
+      document.getElementById('tableContainer').innerHTML='<div class="empty-state">数据加载失败，请稍后刷新</div>';
+    }
+  }
+
+  function render(){
+    if(!data) return;
+    document.getElementById('updateTime').textContent = '更新于 ' + (data.updateTime||'--');
+    document.getElementById('dataSource').textContent = data.dataSource||'';
+    document.getElementById('summary').textContent = data.marketSummary||'';
+    document.getElementById('riskWarning').textContent = data.riskWarning||'';
+    document.getElementById('footerSource').textContent = data.dataSource||'';
+
+    // Stats
+    const cats = data.categories||[];
+    let totalStocks = 0, allChanges = [];
+    let topStock = {name:'',change:-999};
+    cats.forEach(c=>{
+      c.stocks.forEach(s=>{
+        totalStocks++;
+        allChanges.push(s.change);
+        if(s.change > topStock.change) topStock = {name:s.name, change:s.change};
+      });
+    });
+    const avg = allChanges.length ? (allChanges.reduce((a,b)=>a+b,0)/allChanges.length) : 0;
+    document.getElementById('statTotal').textContent = totalStocks;
+    document.getElementById('statAvgChange').textContent = avg.toFixed(2)+'%';
+    document.getElementById('statAvgChange').style.color = avg>=0 ? 'var(--red)' : 'var(--green)';
+    document.getElementById('statAvgSub').textContent = '全部推荐股';
+    document.getElementById('statTopStock').textContent = topStock.name;
+    document.getElementById('statTopStock').style.color = 'var(--red)';
+    document.getElementById('statTopSub').textContent = '+' + topStock.change + '%';
+    document.getElementById('statLowPE').textContent = '--';
+
+    // Tabs
+    renderTabs(cats);
+    renderCategory(0);
+  }
+
+  function renderTabs(cats){
+    const nav = document.getElementById('tabsNav');
+    nav.innerHTML = cats.map((c,i)=>
+      `<button class="tab-btn${i===activeIdx?' active':''}" data-i="${i}">
+        ${c.icon||'📌'} ${c.name}
+        <span class="count">${c.stocks.length}</span>
+      </button>`
+    ).join('');
+    nav.querySelectorAll('.tab-btn').forEach(btn=>{
+      btn.addEventListener('click',function(){
+        activeIdx = parseInt(this.dataset.i);
+        renderTabs(cats);
+        renderCategory(activeIdx);
+      });
+    });
+  }
+
+  function renderCategory(idx){
+    const cats = data.categories||[];
+    if(!cats.length) return;
+    const cat = cats[idx]||cats[0];
+    document.getElementById('catTitle').textContent = cat.icon + ' ' + cat.name;
+    document.getElementById('catDesc').textContent = cat.description||'';
+
+    const stocks = cat.stocks||[];
+    if(!stocks.length){
+      document.getElementById('tableContainer').innerHTML='<div class="empty-state">该类别暂无推荐</div>';
+      return;
+    }
+
+    let html = `<table class="stock-table">
+      <thead><tr>
+        <th>代码</th><th>名称</th><th style="text-align:right">最新价</th><th style="text-align:right">涨跌幅</th><th>推荐理由</th>
+      </tr></thead><tbody>`;
+    stocks.forEach(s=>{
+      const cls = s.change>0?'up':s.change<0?'down':'flat';
+      const sign = s.change>0?'+':'';
+      html += `<tr>
+        <td>${s.code}</td>
+        <td class="stock-name">${s.name}</td>
+        <td class="price">¥${s.price.toFixed(2)}</td>
+        <td class="change-cell"><span class="change ${cls}">${sign}${s.change.toFixed(2)}%</span></td>
+        <td class="reason">${s.reason}</td>
+      </tr>`;
+    });
+    html += '</tbody></table>';
+    document.getElementById('tableContainer').innerHTML = html;
+  }
+
+  load();
+})();
+</script>
+</body>
+</html>

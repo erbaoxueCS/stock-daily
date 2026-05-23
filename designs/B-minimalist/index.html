@@ -1,0 +1,395 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>每日A股 · 精选</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@400;700;900&family=Noto+Serif+SC:wght@400;600;700&family=Source+Sans+3:wght@300;400;600&display=swap" rel="stylesheet">
+<style>
+*,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
+:root{
+  --bg:#fafaf9;
+  --bg-card:#ffffff;
+  --text:#1c1917;
+  --text-secondary:#57534e;
+  --text-tertiary:#a8a29e;
+  --accent:#dc2626;
+  --accent-soft:#fee2e2;
+  --green:#16a34a;
+  --green-soft:#dcfce7;
+  --line:#e7e5e4;
+  --line-light:#f5f5f4;
+  --serif-cn:'Noto Serif SC',serif;
+  --serif-en:'Playfair Display',serif;
+  --sans:'Source Sans 3',sans-serif;
+}
+html{scroll-behavior:smooth}
+body{
+  font-family:var(--sans);
+  background:var(--bg);
+  color:var(--text);
+  line-height:1.7;
+  -webkit-font-smoothing:antialiased;
+}
+.wrap{max-width:860px;margin:0 auto;padding:0 32px}
+
+/* === HERO === */
+.hero{
+  padding:80px 0 48px;
+  text-align:center;
+  border-bottom:1px solid var(--line);
+}
+.hero .date{
+  font-family:var(--serif-en);
+  font-size:14px;
+  letter-spacing:0.15em;
+  text-transform:uppercase;
+  color:var(--text-tertiary);
+  margin-bottom:20px;
+}
+.hero h1{
+  font-family:var(--serif-cn);
+  font-size:clamp(2rem,5vw,3.2rem);
+  font-weight:700;
+  color:var(--text);
+  line-height:1.3;
+  margin-bottom:16px;
+}
+.hero h1 em{
+  font-style:normal;
+  color:var(--accent);
+}
+.hero .subtitle{
+  font-size:16px;
+  color:var(--text-secondary);
+  max-width:500px;
+  margin:0 auto;
+}
+.hero .meta{
+  margin-top:24px;
+  display:flex;
+  justify-content:center;
+  gap:24px;
+  font-size:13px;
+  color:var(--text-tertiary);
+}
+.hero .meta span{
+  display:inline-flex;
+  align-items:center;
+  gap:6px;
+}
+
+/* === MARKET SUMMARY === */
+.market-note{
+  padding:48px 0;
+}
+.market-note blockquote{
+  font-family:var(--serif-cn);
+  font-size:1.15rem;
+  line-height:2;
+  color:var(--text-secondary);
+  padding-left:24px;
+  border-left:3px solid var(--accent);
+  font-style:normal;
+}
+
+/* === SECTION NAV === */
+.section-nav{
+  padding:0 0 40px;
+  display:flex;
+  gap:8px;
+  flex-wrap:wrap;
+}
+.section-nav button{
+  font-family:var(--sans);
+  font-size:14px;
+  font-weight:600;
+  padding:8px 20px;
+  border:1px solid var(--line);
+  border-radius:999px;
+  background:var(--bg-card);
+  color:var(--text-secondary);
+  cursor:pointer;
+  transition:all 0.25s;
+}
+.section-nav button:hover{
+  border-color:var(--text-tertiary);
+  color:var(--text);
+}
+.section-nav button.active{
+  background:var(--text);
+  color:var(--bg);
+  border-color:var(--text);
+}
+
+/* === CATEGORY HEADER === */
+.cat-header{
+  margin-bottom:32px;
+}
+.cat-header .icon{
+  font-size:28px;
+  margin-bottom:8px;
+  display:block;
+}
+.cat-header h2{
+  font-family:var(--serif-cn);
+  font-size:1.8rem;
+  font-weight:700;
+  margin-bottom:8px;
+}
+.cat-header p{
+  font-size:15px;
+  color:var(--text-secondary);
+  max-width:480px;
+}
+
+/* === STOCK CARDS === */
+.stock-list{
+  display:flex;
+  flex-direction:column;
+  gap:1px;
+  background:var(--line);
+  border:1px solid var(--line);
+  border-radius:12px;
+  overflow:hidden;
+}
+.stock-item{
+  background:var(--bg-card);
+  padding:28px 32px;
+  display:grid;
+  grid-template-columns:1fr auto;
+  gap:16px;
+  align-items:start;
+  transition:background 0.2s;
+}
+.stock-item:hover{background:#fafaf9}
+.stock-item:first-child{border-radius:12px 12px 0 0}
+.stock-item:last-child{border-radius:0 0 12px 12px}
+.stock-item:only-child{border-radius:12px}
+.stock-main .name{
+  font-family:var(--serif-cn);
+  font-size:1.25rem;
+  font-weight:700;
+  margin-bottom:2px;
+}
+.stock-main .code{
+  font-family:var(--serif-en);
+  font-size:13px;
+  color:var(--text-tertiary);
+  letter-spacing:0.05em;
+}
+.stock-main .reason{
+  margin-top:12px;
+  font-size:14px;
+  color:var(--text-secondary);
+  line-height:1.8;
+}
+.stock-right{text-align:right}
+.stock-right .price{
+  font-family:var(--serif-en);
+  font-size:1.4rem;
+  font-weight:700;
+  color:var(--text);
+}
+.stock-right .change{
+  display:inline-block;
+  margin-top:6px;
+  padding:4px 12px;
+  border-radius:6px;
+  font-size:14px;
+  font-weight:600;
+  font-family:var(--sans);
+}
+.stock-right .change.up{
+  color:var(--accent);
+  background:var(--accent-soft);
+}
+.stock-right .change.down{
+  color:var(--green);
+  background:var(--green-soft);
+}
+
+/* === EMPTY === */
+.empty{
+  text-align:center;
+  padding:60px 20px;
+  color:var(--text-tertiary);
+  font-size:15px;
+}
+
+/* === RISK === */
+.risk-note{
+  margin:56px 0 40px;
+  padding:20px 24px;
+  background:var(--line-light);
+  border-radius:10px;
+  font-size:13px;
+  color:var(--text-tertiary);
+  display:flex;
+  align-items:flex-start;
+  gap:10px;
+  line-height:1.8;
+}
+.risk-note::before{content:'⚠️';font-size:16px;flex-shrink:0}
+
+/* === FOOTER === */
+footer{
+  border-top:1px solid var(--line);
+  padding:40px 0;
+  text-align:center;
+  font-size:13px;
+  color:var(--text-tertiary);
+}
+footer .foot-logo{
+  font-family:var(--serif-cn);
+  font-size:1.1rem;
+  font-weight:700;
+  color:var(--text);
+  margin-bottom:8px;
+}
+footer p{margin-top:4px}
+
+@media(max-width:640px){
+  .hero{padding:48px 0 32px}
+  .wrap{padding:0 20px}
+  .stock-item{padding:20px}
+  .stock-item{grid-template-columns:1fr;gap:12px}
+  .stock-right{text-align:left}
+  .section-nav{gap:6px}
+  .section-nav button{padding:6px 16px;font-size:13px}
+}
+</style>
+</head>
+<body>
+
+<!-- Hero -->
+<header class="hero">
+  <div class="wrap">
+    <div class="date" id="heroDate">--</div>
+    <h1>每日A股<em>潜力</em>推荐</h1>
+    <p class="subtitle" id="heroSource">AI驱动的智能选股分析</p>
+    <div class="meta">
+      <span id="heroTime">加载中...</span>
+    </div>
+  </div>
+</header>
+
+<!-- Market Summary -->
+<section class="market-note">
+  <div class="wrap">
+    <blockquote id="summary">加载中...</blockquote>
+  </div>
+</section>
+
+<!-- Section Nav -->
+<section class="wrap">
+  <nav class="section-nav" id="nav"></nav>
+</section>
+
+<!-- Category Content -->
+<section class="wrap" style="padding-bottom:40px">
+  <div class="cat-header" id="catHeader">
+    <span class="icon" id="catIcon">--</span>
+    <h2 id="catName">--</h2>
+    <p id="catDesc">--</p>
+  </div>
+  <div id="list"></div>
+</section>
+
+<!-- Risk -->
+<section class="wrap">
+  <div class="risk-note" id="risk">加载中...</div>
+</section>
+
+<!-- Footer -->
+<footer>
+  <div class="wrap">
+    <div class="foot-logo">每日A股</div>
+    <p>投资有风险，入市需谨慎</p>
+    <p style="margin-top:8px;font-size:12px" id="footerData">--</p>
+  </div>
+</footer>
+
+<script>
+(function(){
+  let data=null, idx=0;
+
+  async function load(){
+    try{
+      const r=await fetch('../data/recommendations.json',{cache:'no-cache'});
+      if(!r.ok)throw r.status;
+      data=await r.json();
+      render();
+    }catch(e){
+      document.getElementById('list').innerHTML='<div class="empty">数据加载失败</div>';
+    }
+  }
+
+  function fmtDate(s){
+    if(!s)return '--';
+    const p=s.split(' ');
+    if(p[0]){
+      const d=p[0].replace(/\//g,'.');
+      return d;
+    }
+    return s;
+  }
+
+  function render(){
+    if(!data)return;
+    document.getElementById('heroDate').textContent=fmtDate(data.updateTime);
+    document.getElementById('heroTime').textContent='更新于 '+data.updateTime;
+    document.getElementById('heroSource').textContent=data.dataSource||'';
+    document.getElementById('summary').textContent=data.marketSummary||'';
+    document.getElementById('risk').textContent=data.riskWarning||'';
+    document.getElementById('footerData').textContent=data.dataSource+' | '+data.updateTime;
+
+    const cats=data.categories||[];
+    const nav=document.getElementById('nav');
+    nav.innerHTML=cats.map((c,i)=>
+      `<button class="${i===idx?'active':''}" data-i="${i}">${c.icon||''} ${c.name}</button>`
+    ).join('');
+    nav.querySelectorAll('button').forEach(b=>{
+      b.addEventListener('click',function(){
+        idx=parseInt(this.dataset.i);
+        render();
+      });
+    });
+
+    const cat=cats[idx]||cats[0];
+    document.getElementById('catIcon').textContent=cat.icon||'';
+    document.getElementById('catName').textContent=cat.name;
+    document.getElementById('catDesc').textContent=cat.description||'';
+
+    const stocks=cat.stocks||[];
+    if(!stocks.length){
+      document.getElementById('list').innerHTML='<div class="empty">暂无推荐</div>';
+      return;
+    }
+
+    let html='<div class="stock-list">';
+    stocks.forEach(s=>{
+      const cls=s.change>0?'up':s.change<0?'down':'';
+      const sign=s.change>0?'+':'';
+      html+=`<div class="stock-item">
+        <div class="stock-main">
+          <div class="name">${s.name}</div>
+          <div class="code">${s.code}</div>
+          <div class="reason">${s.reason}</div>
+        </div>
+        <div class="stock-right">
+          <div class="price">${s.price.toFixed(2)}</div>
+          <div class="change ${cls}">${sign}${s.change.toFixed(2)}%</div>
+        </div>
+      </div>`;
+    });
+    html+='</div>';
+    document.getElementById('list').innerHTML=html;
+  }
+
+  load();
+})();
+</script>
+</body>
+</html>

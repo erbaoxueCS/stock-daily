@@ -3,6 +3,7 @@ import { HttpsProxyAgent } from 'https-proxy-agent';
 import fs from 'fs';
 import path from 'path';
 import { fileURLToPath } from 'url';
+import { computeAllFactors } from './factors/index.js';
 
 const __dirname = path.dirname(fileURLToPath(import.meta.url));
 const DATA_DIR = path.join(__dirname, '..', 'data');
@@ -160,11 +161,17 @@ async function fetchSectorLeaders(sectorCode) {
 
 // ============ AI 分析 ============
 
-function buildAnalysisPrompt(topMovers, lowPE, hotSectors, dragonTiger, news) {
-  const topMoversSample = topMovers.slice(0, 100).map(s => ({
-    code: s.f12, name: s.f14, price: s.f2, change: s.f3,
-    pe: s.f9, pb: s.f23, mcap: +(s.f20 / 1e8).toFixed(1), turnover: s.f8
-  }));
+function buildAnalysisPrompt(topMovers, lowPE, hotSectors, dragonTiger, news, factorResults) {
+  const topMoversSample = topMovers.slice(0, 100).map(s => {
+    const code = s.f12;
+    const entry = {
+      code, name: s.f14, price: s.f2, change: s.f3,
+      pe: s.f9, pb: s.f23, mcap: +(s.f20 / 1e8).toFixed(1), turnover: s.f8
+    };
+    const factors = factorResults?.get(code);
+    if (factors) entry.factors = factors;
+    return entry;
+  });
 
   const lowPESample = lowPE.filter(s => parseFloat(s.f9) > 0 && parseFloat(s.f9) < 20 && parseFloat(s.f20) > 10e8)
     .slice(0, 50).map(s => ({
@@ -179,6 +186,15 @@ function buildAnalysisPrompt(topMovers, lowPE, hotSectors, dragonTiger, news) {
   const newsTitles = news.slice(0, 10).map(n => n.title);
 
   return `你是一位经验丰富的A股分析师。请根据以下市场数据，推荐今日有潜力的股票。
+
+## 因子说明
+每只股票附带因子得分 (0-1)，基于Fama-French多因子模型计算：
+- valuation: 估值因子 (PE/PB综合，越高越低估)
+- momentum: 动量因子 (适中正动量最佳，极端涨跌分低)
+- volatility: 波动因子 (振幅越低越稳)
+- volume: 量价因子 (换手率/量比配合度)
+- capital: 资金因子 (放量上涨=流入信号)
+- composite: 综合因子得分
 
 ## 今日涨幅领先股票 (Top 100)
 ${JSON.stringify(topMoversSample)}
@@ -195,6 +211,10 @@ ${newsTitles.map((t, i) => `${i + 1}. ${t}`).join('\n')}
 ## 任务要求
 请严格按以下JSON格式返回推荐。推荐4个类别，每类3-5只股票：
 
+1. 优先参考 composite 因子得分，避免推荐 composite < 0.4 的股票
+2. 推荐理由必须引用具体因子数据（如 PE/动量/换手率等）
+3. 不同类别侧重不同因子组合
+
 {
   "marketSummary": "今日市场整体概述，50字以内",
   "categories": [
@@ -208,7 +228,7 @@ ${newsTitles.map((t, i) => `${i + 1}. ${t}`).join('\n')}
           "name": "平安银行",
           "price": 12.50,
           "change": 2.3,
-          "reason": "推荐理由，说明为什么选这只股票，引用具体数据"
+          "reason": "PE 8.5，估值因子得分0.82，低估值且动量适中"
         }
       ]
     },
@@ -302,18 +322,46 @@ async function main() {
     console.log(`  ✅ 龙虎榜: ${dragonTiger.length} 条`);
     console.log(`  ✅ 市场新闻: ${news.length} 条`);
 
+    // 计算因子得分
+    const factorResults = computeAllFactors(topMovers);
+
     // 调用DeepSeek分析
     console.log('');
     console.log('🤖 调用DeepSeek V4进行AI分析...');
-    const prompt = buildAnalysisPrompt(topMovers, lowPE, hotSectors, dragonTiger, news);
+    const prompt = buildAnalysisPrompt(topMovers, lowPE, hotSectors, dragonTiger, news, factorResults);
     const aiResponse = await callDeepSeek(prompt);
     const analysis = extractJSON(aiResponse);
     console.log('  ✅ AI分析完成');
 
     // 添加元数据
     analysis.updateTime = new Date().toLocaleString('zh-CN', { timeZone: 'Asia/Shanghai' });
-    analysis.dataSource = '东方财富实时行情 + DeepSeek V4 AI分析';
+    analysis.dataSource = '东方财富实时行情 + FactorEngine因子分析 + DeepSeek V4 AI';
     analysis.disclaimer = '本推荐仅供参考，不构成投资建议。股市有风险，投资需谨慎。';
+
+    // 为推荐股票附加因子数据
+    const stockFactorMap = new Map();
+    for (const s of topMovers) {
+      const code = s.f12;
+      const factors = factorResults?.get(code);
+      if (factors) stockFactorMap.set(code, factors);
+    }
+    for (const cat of analysis.categories) {
+      for (const stock of cat.stocks) {
+        const factors = stockFactorMap.get(stock.code);
+        if (factors) stock.factors = factors;
+      }
+    }
+
+    // 附加因子摘要元数据
+    analysis.factorSummary = {
+      totalStocksScored: factorResults.size,
+      topComposite: [...factorResults.entries()]
+        .filter(([_, f]) => f.composite != null)
+        .sort((a, b) => b[1].composite - a[1].composite)
+        .slice(0, 3)
+        .map(([code, f]) => ({ code, composite: f.composite })),
+      weights: { valuation: 0.25, momentum: 0.20, volatility: 0.15, volume: 0.20, capital: 0.20 },
+    };
 
     // 写入文件
     if (!fs.existsSync(DATA_DIR)) {

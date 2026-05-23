@@ -1,0 +1,164 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>每日A股 - 设计方案对比</title>
+<style>
+*,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
+body{
+  font-family:-apple-system,BlinkMacSystemFont,"Segoe UI","PingFang SC","Microsoft YaHei",sans-serif;
+  background:#0f1117;
+  color:#e8eaed;
+  min-height:100vh;
+  display:flex;
+  align-items:center;
+  justify-content:center;
+  padding:40px 20px;
+}
+.container{max-width:1000px;width:100%}
+h1{
+  font-size:2rem;
+  font-weight:800;
+  text-align:center;
+  margin-bottom:8px;
+  background:linear-gradient(135deg,#fff,#3b82f6);
+  -webkit-background-clip:text;
+  -webkit-text-fill-color:transparent;
+}
+.subtitle{
+  text-align:center;
+  color:#6b7280;
+  margin-bottom:48px;
+  font-size:15px;
+}
+.grid{
+  display:grid;
+  grid-template-columns:repeat(auto-fit,minmax(280px,1fr));
+  gap:20px;
+  margin-bottom:24px;
+}
+.card{
+  background:#1a1d27;
+  border:1px solid #2d3148;
+  border-radius:16px;
+  padding:32px 28px;
+  text-align:center;
+  transition:all 0.3s;
+  cursor:pointer;
+  text-decoration:none;
+  color:inherit;
+  display:block;
+  position:relative;
+  overflow:hidden;
+}
+.card:hover{
+  transform:translateY(-4px);
+  box-shadow:0 12px 40px rgba(0,0,0,0.4);
+}
+.card:hover .card-preview{opacity:1}
+.card .label{
+  font-size:12px;
+  font-weight:600;
+  text-transform:uppercase;
+  letter-spacing:0.1em;
+  margin-bottom:12px;
+}
+.card h2{
+  font-size:1.3rem;
+  font-weight:700;
+  margin-bottom:8px;
+}
+.card p{
+  font-size:14px;
+  color:#9aa0a6;
+  line-height:1.6;
+}
+.card-preview{
+  position:absolute;
+  top:0;left:0;right:0;bottom:0;
+  opacity:0;
+  transition:opacity 0.3s;
+  pointer-events:none;
+  border-radius:16px;
+}
+.card-preview .overlay{
+  position:absolute;
+  top:0;left:0;right:0;bottom:0;
+  background:rgba(15,17,23,0.92);
+  border-radius:16px;
+  display:flex;
+  align-items:center;
+  justify-content:center;
+  font-size:1rem;
+  font-weight:600;
+  color:#3b82f6;
+}
+.card-preview iframe{
+  width:100%;height:100%;
+  border:none;
+  border-radius:16px;
+}
+
+/* Style-specific accents */
+.card-a{border-color:rgba(59,130,246,0.2)}
+.card-a:hover{border-color:rgba(59,130,246,0.5)}
+.card-a .label{color:#3b82f6}
+
+.card-b{border-color:rgba(255,255,255,0.1)}
+.card-b:hover{border-color:rgba(255,255,255,0.3)}
+.card-b .label{color:#a8a29e}
+
+.card-c{border-color:rgba(0,240,255,0.15)}
+.card-c:hover{border-color:rgba(0,240,255,0.4)}
+.card-c .label{color:#00f0ff}
+
+.card-orig{border-color:rgba(139,92,246,0.15)}
+.card-orig:hover{border-color:rgba(139,92,246,0.4)}
+.card-orig .label{color:#8b5cf6}
+
+.footer{
+  text-align:center;
+  margin-top:40px;
+  font-size:13px;
+  color:#4b5563;
+}
+.footer a{color:#3b82f6;text-decoration:none}
+.footer a:hover{text-decoration:underline}
+</style>
+</head>
+<body>
+<div class="container">
+  <h1>每日A股 · 设计方案对比</h1>
+  <p class="subtitle">选择一个方案查看完整效果，点击卡片在新标签页打开</p>
+
+  <div class="grid">
+    <a href="A-professional/index.html" target="_blank" class="card card-a">
+      <div class="label">方案 A</div>
+      <h2>专业金融仪表盘</h2>
+      <p>暗色调 + 密集数据表格 + 滚动行情条<br>参考 Bloomberg / 同花顺风格，信息密度最高</p>
+    </a>
+    <a href="B-minimalist/index.html" target="_blank" class="card card-b">
+      <div class="label">方案 B</div>
+      <h2>现代极简主义</h2>
+      <p>浅色背景 + 大字体 + 大量留白<br>杂志编辑风格，清爽干净，阅读体验最佳</p>
+    </a>
+    <a href="C-cyberpunk/index.html" target="_blank" class="card card-c">
+      <div class="label">方案 C</div>
+      <h2>暗色科技终端</h2>
+      <p>深黑背景 + 霓虹光效 + 扫描线动画<br>赛博朋克风，科技感十足，视觉冲击力最强</p>
+    </a>
+    <a href="../index.html" target="_blank" class="card card-orig">
+      <div class="label">原版</div>
+      <h2>当前线上版本</h2>
+      <p>现有页面结构，Tab + 卡片列表<br>作为对比基准</p>
+    </a>
+  </div>
+
+  <div class="footer">
+    <p>所有方案使用相同的数据源：<code>data/recommendations.json</code></p>
+    <p style="margin-top:8px">选择后告诉我，我会将选定方案合并到主页面</p>
+  </div>
+</div>
+</body>
+</html>
