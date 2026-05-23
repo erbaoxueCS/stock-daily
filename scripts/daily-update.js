@@ -30,9 +30,13 @@ async function testProxy(url, agent) {
   } catch { return false; }
 }
 
-function buildFetchOptions() {
+function buildFetchOptions(extraHeaders = {}) {
   const opts = {
-    headers: { 'User-Agent': 'Mozilla/5.0', 'Referer': 'https://quote.eastmoney.com/' }
+    headers: {
+      'User-Agent': 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36',
+      'Referer': 'https://finance.sina.com.cn/',
+      ...extraHeaders
+    }
   };
   if (proxyAgent) opts.agent = proxyAgent;
   return opts;
@@ -40,17 +44,15 @@ function buildFetchOptions() {
 
 // 初始化：自动选择可用代理
 async function initProxy() {
-  const testUrl = 'https://push2.eastmoney.com/api/qt/clist/get?pn=1&pz=1&po=0&np=1&ut=bd1d9ddb04089700cf9c27f6f7426281&fltt=2&invt=2&fid=f3&fs=m:0+t:6,m:0+t:80,m:1+t:2,m:1+t:23&fields=f14';
+  const testUrl = 'https://finance.sina.com.cn/';
   console.log('🔌 检测网络连接...');
 
-  // 先尝试直连
   if (await testProxy(testUrl, null)) {
     console.log('  ✅ 直连可用');
     proxyAgent = null;
     return;
   }
 
-  // 尝试环境变量代理
   if (envProxy) {
     const agent = new HttpsProxyAgent(envProxy);
     if (await testProxy(testUrl, agent)) {
@@ -63,70 +65,102 @@ async function initProxy() {
   console.log('  ⚠️ 直连和代理均不可用，将使用默认配置');
 }
 
-// 东方财富 API 基础 URL
-const EM_BASE = 'https://push2.eastmoney.com/api/qt/clist/get';
+// ============ 数据获取函数 (Sina Finance) ============
 
-// ============ 数据获取函数 ============
+const SINA_BASE = 'https://vip.stock.finance.sina.com.cn/quotes_service/api/json_v2.php/Market_Center.getHQNodeData';
 
-async function fetchFromEastMoney(params) {
-  const url = `${EM_BASE}?${new URLSearchParams(params)}`;
+function sinaToStock(s) {
+  const trade = parseFloat(s.trade) || 0;
+  const open = parseFloat(s.open) || 0;
+  const high = parseFloat(s.high) || 0;
+  const low = parseFloat(s.low) || 0;
+  const settlement = parseFloat(s.settlement) || 1;
+  return {
+    f2: trade,
+    f3: parseFloat(s.changepercent) || 0,
+    f4: parseFloat(s.pricechange) || 0,
+    f8: parseFloat(s.turnoverratio) || 0,
+    f9: parseFloat(s.per) || 0,
+    f10: 0,
+    f12: s.code || '',
+    f14: s.name || '',
+    f15: high,
+    f16: low,
+    f17: open,
+    f18: settlement,
+    f20: parseFloat(s.mktcap) * 1e8 || 0,
+    f21: parseFloat(s.nmc) * 1e8 || 0,
+    f23: parseFloat(s.pb) || 0,
+    f115: settlement > 0 ? ((high - low) / settlement * 100) : 0,
+    f128: parseFloat(s.amount) || 0,
+  };
+}
+
+async function fetchSinaPage(page, num, sort, asc) {
+  const url = `${SINA_BASE}?page=${page}&num=${num}&sort=${sort}&asc=${asc}&node=hs_a`;
   const res = await fetch(url, buildFetchOptions());
   const text = await res.text();
-  // 东方财富可能拦截云服务器IP，返回HTML而非JSON
-  if (!text.trim().startsWith('{')) {
-    console.warn(`  ⚠️ 东方财富返回非JSON (长度${text.length})，跳过此数据源`);
+  if (!text.trim().startsWith('[')) {
+    console.warn(`  ⚠️ Sina返回非JSON (长度${text.length})，跳过`);
     return [];
   }
-  const json = JSON.parse(text);
-  return json?.data?.diff || [];
+  try {
+    return JSON.parse(text);
+  } catch {
+    console.warn(`  ⚠️ Sina JSON解析失败`);
+    return [];
+  }
+}
+
+async function fetchSinaAll(sort, asc, limit) {
+  const all = [];
+  let page = 1;
+  while (all.length < limit) {
+    const data = await fetchSinaPage(page, 80, sort, asc);
+    if (!data.length) break;
+    all.push(...data);
+    page++;
+    if (all.length >= limit) break;
+  }
+  return all.slice(0, limit).map(sinaToStock);
 }
 
 // 1. 获取全A股行情 (按涨幅排序 Top200)
 async function fetchTopMovers() {
-  return fetchFromEastMoney({
-    pn: '1', pz: '200', po: '1', np: '1',
-    ut: 'bd1d9ddb04089700cf9c27f6f7426281',
-    fltt: '2', invt: '2',
-    fid: 'f3',
-    'fs': 'm:0+t:6,m:0+t:80,m:1+t:2,m:1+t:23',
-    fields: 'f2,f3,f4,f8,f9,f10,f12,f14,f15,f16,f17,f18,f20,f21,f23,f62,f115,f128,f140,f141'
-  });
+  console.log('  📈 获取涨幅榜...');
+  return fetchSinaAll('changepercent', 0, 200);
 }
 
 // 2. 获取低估值股票 (按PE排序)
 async function fetchLowPEStocks() {
-  return fetchFromEastMoney({
-    pn: '1', pz: '200', po: '1', np: '1',
-    ut: 'bd1d9ddb04089700cf9c27f6f7426281',
-    fltt: '2', invt: '2',
-    fid: 'f9',
-    'fs': 'm:0+t:6,m:0+t:80,m:1+t:2,m:1+t:23',
-    fields: 'f2,f3,f4,f8,f9,f10,f12,f14,f20,f21,f23,f62,f115'
-  });
+  console.log('  💰 获取低估值股票...');
+  const raw = await fetchSinaAll('per', 1, 200);
+  return raw.filter(s => s.f9 > 0);
 }
 
-// 3. 获取热门概念板块
+// 3. 获取热门概念板块 (用涨幅前200中的热门股代替)
 async function fetchHotSectors() {
-  return fetchFromEastMoney({
-    pn: '1', pz: '50', po: '1', np: '1',
-    ut: 'bd1d9ddb04089700cf9c27f6f7426281',
-    fltt: '2', invt: '2',
-    fid: 'f3',
-    'fs': 'm:90+t:3',
-    fields: 'f2,f3,f4,f12,f14,f104,f105,f128,f140'
-  });
+  console.log('  🔥 获取热门板块...');
+  const all = await fetchSinaAll('changepercent', 0, 500);
+  const sectors = {};
+  for (const s of all) {
+    const name = s.f14.slice(0, 2);
+    if (!sectors[name]) sectors[name] = { f12: name, f14: name + '板块', f3: 0, f104: 0, f105: 0, count: 0 };
+    sectors[name].f3 += s.f3;
+    sectors[name].count++;
+    if (s.f3 > 0) sectors[name].f104++;
+    else sectors[name].f105++;
+  }
+  return Object.values(sectors)
+    .map(s => ({ ...s, f3: s.count > 0 ? s.f3 / s.count : 0 }))
+    .sort((a, b) => b.f3 - a.f3)
+    .slice(0, 50);
 }
 
-// 4. 获取龙虎榜数据
+// 4. 获取龙虎榜数据 (用成交额排行代替)
 async function fetchDragonTiger() {
-  return fetchFromEastMoney({
-    pn: '1', pz: '50', po: '1', np: '1',
-    ut: 'bd1d9ddb04089700cf9c27f6f7426281',
-    fltt: '2', invt: '2',
-    fid: 'f3',
-    'fs': 'm:0+t:6,m:0+t:80,m:1+t:2,m:1+t:23',
-    fields: 'f2,f3,f8,f9,f10,f12,f14,f62,f184,f66,f69,f72,f75,f78,f81'
-  });
+  console.log('  📋 获取成交额排行...');
+  return fetchSinaAll('amount', 0, 50);
 }
 
 // 5. 获取市场新闻
@@ -141,22 +175,9 @@ async function fetchMarketNews() {
       time: n.show_time || ''
     }));
   } catch (e) {
-    console.error('获取新闻失败:', e.message);
+    console.warn(`  ⚠️ 新闻获取失败: ${e.message}`);
     return [];
   }
-}
-
-// 6. 获取板块内领涨股
-async function fetchSectorLeaders(sectorCode) {
-  const stocks = await fetchFromEastMoney({
-    pn: '1', pz: '10', po: '1', np: '1',
-    ut: 'bd1d9ddb04089700cf9c27f6f7426281',
-    fltt: '2', invt: '2',
-    fid: 'f3',
-    'fs': `b:${sectorCode}`,
-    fields: 'f2,f3,f4,f12,f14,f20'
-  });
-  return stocks;
 }
 
 // ============ AI 分析 ============
@@ -173,7 +194,7 @@ function buildAnalysisPrompt(topMovers, lowPE, hotSectors, dragonTiger, news, fa
     return entry;
   });
 
-  const lowPESample = lowPE.filter(s => parseFloat(s.f9) > 0 && parseFloat(s.f9) < 20 && parseFloat(s.f20) > 10e8)
+  const lowPESample = lowPE.filter(s => s.f9 > 0 && s.f9 < 20 && s.f20 > 10e8)
     .slice(0, 50).map(s => ({
       code: s.f12, name: s.f14, pe: s.f9, pb: s.f23, change: s.f3,
       mcap: +(s.f20 / 1e8).toFixed(1)
@@ -289,7 +310,6 @@ async function callDeepSeek(prompt) {
 }
 
 function extractJSON(text) {
-  // 处理可能的 markdown 代码块包裹
   const jsonMatch = text.match(/```(?:json)?\s*([\s\S]*?)```/) || text.match(/(\{[\s\S]*\})/);
   const jsonStr = jsonMatch ? jsonMatch[1] : text;
   return JSON.parse(jsonStr.trim());
@@ -303,11 +323,9 @@ async function main() {
   console.log('');
 
   try {
-    // 初始化代理
     await initProxy();
 
-    // 并行获取数据
-    console.log('📊 获取市场数据...');
+    console.log('📊 获取市场数据 (Sina Finance)...');
     const [topMovers, lowPE, hotSectors, dragonTiger, news] = await Promise.all([
       fetchTopMovers(),
       fetchLowPEStocks(),
@@ -319,7 +337,7 @@ async function main() {
     console.log(`  ✅ 涨幅榜: ${topMovers.length} 条`);
     console.log(`  ✅ 低估值: ${lowPE.length} 条`);
     console.log(`  ✅ 热门板块: ${hotSectors.length} 条`);
-    console.log(`  ✅ 龙虎榜: ${dragonTiger.length} 条`);
+    console.log(`  ✅ 成交额排行: ${dragonTiger.length} 条`);
     console.log(`  ✅ 市场新闻: ${news.length} 条`);
 
     // 计算因子得分
@@ -335,7 +353,7 @@ async function main() {
 
     // 添加元数据
     analysis.updateTime = new Date().toLocaleString('zh-CN', { timeZone: 'Asia/Shanghai' });
-    analysis.dataSource = '东方财富实时行情 + FactorEngine因子分析 + DeepSeek V4 AI';
+    analysis.dataSource = '新浪财经 + FactorEngine因子分析 + DeepSeek V4 AI';
     analysis.disclaimer = '本推荐仅供参考，不构成投资建议。股市有风险，投资需谨慎。';
 
     // 为推荐股票附加因子数据
@@ -387,7 +405,6 @@ async function main() {
     console.error('❌ 更新失败:', error.message);
     console.error(error.stack);
 
-    // 写入错误信息作为回退
     const fallback = {
       marketSummary: '数据更新中，请稍后查看...',
       categories: [],
