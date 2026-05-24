@@ -5,13 +5,13 @@ on:
   workflow_dispatch:
 permissions:
   contents: write
-  pages: write
-  id-token: write
 jobs:
   update:
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
       - uses: actions/setup-node@v4
         with:
           node-version: "24"
@@ -20,15 +20,17 @@ jobs:
         env:
           DEEPSEEK_API_KEY: ${{ secrets.DEEPSEEK_API_KEY }}
         run: node scripts/daily-update.js
-      - name: Commit and push
+      - name: Commit and push data
         run: |
           git config user.name "StockBot"
           git config user.email "stockbot@auto.com"
           git add data/recommendations.json
-          git diff --staged --quiet || (git commit -m "Daily stock update $(date +%Y-%m-%d)" && git push)
+          git diff --staged --quiet || git commit -m "Daily stock update $(date +%Y-%m-%d)"
       - name: Deploy to GitHub Pages
-        uses: actions/upload-pages-artifact@v3
+        uses: peaceiris/actions-gh-pages@v4
         with:
-          path: .
-      - name: Deploy
-        uses: actions/deploy-pages@v4
+          github_token: ${{ secrets.GITHUB_TOKEN }}
+          publish_dir: .
+          publish_branch: gh-pages
+          keep_files: false
+          commit_message: "Pages deploy: $(date +%Y-%m-%d)"
