@@ -1,17 +1,17 @@
 {
-  "marketSummary": "今日市场震荡走高，科技股领涨，N嘉德等新股涨幅巨大，资金活跃度提升。",
+  "marketSummary": "今日市场强势，多只新股及科技股大涨，资金活跃，但需警惕高波动风险。",
   "categories": [
     {
       "name": "低估值精选",
       "icon": "📊",
-      "description": "基于估值因子和综合因子，筛选PE较低、估值因子得分高的股票。",
+      "description": "综合因子得分高，估值低且动量稳健，适合价值投资。",
       "stocks": [
         {
           "code": "300286",
           "name": "安科瑞",
           "price": 29.51,
           "change": 13.282,
-          "reason": "PE 34.3，估值因子0.71，综合因子0.33，低估值且动量适中。",
+          "reason": "PE34.3，估值因子0.71，综合因子0.33，低估值且动量适中。",
           "factors": {
             "valuation": 0.7106,
             "momentum": 0.0241,
@@ -26,7 +26,7 @@
           "name": "扬杰科技",
           "price": 86.38,
           "change": 11.3,
-          "reason": "PE 37.1，估值因子0.64，综合因子0.37，低估值且量价配合。",
+          "reason": "PE37.1，估值因子0.64，综合因子0.37，低估值且动量良好。",
           "factors": {
             "valuation": 0.6422,
             "momentum": 0.2327,
@@ -37,33 +37,11 @@
           }
         },
         {
-          "code": "688139",
-          "name": "海尔生物",
-          "price": 36.79,
-          "change": 10.813,
-          "reason": "PE 46.0，估值因子0.71，综合因子0.40，低估值且动量稳定。",
-          "factors": {
-            "valuation": 0.7055,
-            "momentum": 0.3799,
-            "volatility": 0.4623,
-            "volume": 0.4031,
-            "capital": 0,
-            "composite": 0.4023
-          }
-        }
-      ]
-    },
-    {
-      "name": "热点板块",
-      "icon": "🔥",
-      "description": "聚焦涨幅领先且综合因子高的热门板块个股。",
-      "stocks": [
-        {
           "code": "300726",
           "name": "宏达电子",
           "price": 63.23,
           "change": 11.125,
-          "reason": "综合因子0.37，估值因子0.54，动量因子0.28，板块热点且量价配合。",
+          "reason": "PE64.9，估值因子0.54，综合因子0.37，低估值且动量适中。",
           "factors": {
             "valuation": 0.5407,
             "momentum": 0.2784,
@@ -72,50 +50,20 @@
             "capital": 0,
             "composite": 0.3684
           }
-        },
-        {
-          "code": "301682",
-          "name": "宏明电子",
-          "price": 169.65,
-          "change": 10.897,
-          "reason": "综合因子0.39，估值因子0.63，动量因子0.35，量价因子0.43，强势板块。",
-          "factors": {
-            "valuation": 0.6281,
-            "momentum": 0.3498,
-            "volatility": 0.5075,
-            "volume": 0.4283,
-            "capital": 0,
-            "composite": 0.3888
-          }
-        },
-        {
-          "code": "301282",
-          "name": "金禄电子",
-          "price": 28.9,
-          "change": 10.221,
-          "reason": "综合因子0.51，估值因子0.65，动量因子0.67，波动因子0.73，板块龙头。",
-          "factors": {
-            "valuation": 0.6492,
-            "momentum": 0.6653,
-            "volatility": 0.7286,
-            "volume": 0.5297,
-            "capital": 0,
-            "composite": 0.5106
-          }
         }
       ]
     },
     {
-      "name": "新闻驱动",
-      "icon": "📰",
-      "description": "结合市场新闻与因子数据，选择有潜在催化剂个股。",
+      "name": "热点板块",
+      "icon": "🔥",
+      "description": "资金流入明显，板块效应强，适合短线参与。",
       "stocks": [
         {
           "code": "300476",
           "name": "胜宏科技",
           "price": 375.5,
           "change": 13.307,
-          "reason": "综合因子0.31，动量因子0.02，量价因子0.51，波动因子0.82，新闻催化预期。",
+          "reason": "综合因子0.31，动量因子0.02，波动因子0.82，量价配合好。",
           "factors": {
             "valuation": 0.3116,
             "momentum": 0.0234,
@@ -130,7 +78,7 @@
           "name": "天孚通信",
           "price": 372.5,
           "change": 10.465,
-          "reason": "综合因子0.36，动量因子0.53，量价因子0.43，通信板块新闻驱动。",
+          "reason": "综合因子0.36，动量因子0.53，波动因子0.83，资金流入明显。",
           "factors": {
             "valuation": 0.1618,
             "momentum": 0.5306,
@@ -145,7 +93,7 @@
           "name": "拉普拉斯",
           "price": 70.26,
           "change": 10.402,
-          "reason": "综合因子0.42，动量因子0.56，量价因子0.54，新能源新闻催化。",
+          "reason": "综合因子0.42，动量因子0.56，估值因子0.55，估值合理且动量强劲。",
           "factors": {
             "valuation": 0.5538,
             "momentum": 0.5629,
@@ -158,16 +106,46 @@
       ]
     },
     {
-      "name": "技术形态",
-      "icon": "📈",
-      "description": "基于动量因子和波动因子，选择技术形态突破的个股。",
+      "name": "新闻驱动",
+      "icon": "📰",
+      "description": "受今日市场新闻影响，相关股票有望持续活跃。",
       "stocks": [
+        {
+          "code": "301682",
+          "name": "宏明电子",
+          "price": 169.65,
+          "change": 10.897,
+          "reason": "综合因子0.39，动量因子0.35，换手率27.9%，资金关注度高。",
+          "factors": {
+            "valuation": 0.6281,
+            "momentum": 0.3498,
+            "volatility": 0.5075,
+            "volume": 0.4283,
+            "capital": 0,
+            "composite": 0.3888
+          }
+        },
+        {
+          "code": "301282",
+          "name": "金禄电子",
+          "price": 28.9,
+          "change": 10.221,
+          "reason": "综合因子0.51，动量因子0.67，估值因子0.65，受电子板块利好驱动。",
+          "factors": {
+            "valuation": 0.6492,
+            "momentum": 0.6653,
+            "volatility": 0.7286,
+            "volume": 0.5297,
+            "capital": 0,
+            "composite": 0.5106
+          }
+        },
         {
           "code": "301458",
           "name": "钧崴电子",
           "price": 44.66,
           "change": 10.136,
-          "reason": "动量因子0.72，波动因子0.57，综合因子0.43，技术突破形态。",
+          "reason": "综合因子0.43，动量因子0.72，换手率10.9%，新闻催化明显。",
           "factors": {
             "valuation": 0.4261,
             "momentum": 0.7187,
@@ -176,42 +154,64 @@
             "capital": 0,
             "composite": 0.433
           }
-        },
+        }
+      ]
+    },
+    {
+      "name": "技术形态",
+      "icon": "📈",
+      "description": "因子显示技术面强势，动量充足且波动可控，适合趋势跟踪。",
+      "stocks": [
         {
-          "code": "300553",
-          "name": "集智股份",
-          "price": 67.26,
-          "change": 10.534,
-          "reason": "动量因子0.50，波动因子0.49，量价因子0.52，综合因子0.32，技术形态良好。",
+          "code": "600596",
+          "name": "新安股份",
+          "price": 13.26,
+          "change": 10.041,
+          "reason": "综合因子0.47，动量因子0.78，波动因子0.68，技术形态良好。",
           "factors": {
-            "valuation": 0.1899,
-            "momentum": 0.4971,
-            "volatility": 0.4925,
-            "volume": 0.5207,
+            "valuation": 0.5688,
+            "momentum": 0.7827,
+            "volatility": 0.6834,
+            "volume": 0.3549,
             "capital": 0,
-            "composite": 0.3249
+            "composite": 0.4722
           }
         },
         {
-          "code": "301568",
-          "name": "思泰克",
-          "price": 65.1,
-          "change": 11.454,
-          "reason": "动量因子0.20，波动因子0.47，估值因子0.53，综合因子0.32，技术面走强。",
+          "code": "600611",
+          "name": "大众交通",
+          "price": 6.13,
+          "change": 10.054,
+          "reason": "综合因子0.47，动量因子0.77，波动因子1.0，低波动且动量强。",
           "factors": {
-            "valuation": 0.5276,
-            "momentum": 0.1982,
-            "volatility": 0.4673,
-            "volume": 0.4066,
+            "valuation": 0.4764,
+            "momentum": 0.7737,
+            "volatility": 0.995,
+            "volume": 0.2433,
             "capital": 0,
-            "composite": 0.323
+            "composite": 0.4717
+          }
+        },
+        {
+          "code": "002442",
+          "name": "龙星科技",
+          "price": 8.11,
+          "change": 10.041,
+          "reason": "综合因子0.42，动量因子0.78，估值因子0.59，技术面与估值双优。",
+          "factors": {
+            "valuation": 0.593,
+            "momentum": 0.7827,
+            "volatility": 0.191,
+            "volume": 0.4138,
+            "capital": 0,
+            "composite": 0.4162
           }
         }
       ]
     }
   ],
-  "riskWarning": "以上推荐仅供参考，市场有风险，投资需谨慎。",
-  "updateTime": "2026/5/24 21:11:46",
+  "riskWarning": "今日涨幅较大个股需警惕回调风险，注意控制仓位。",
+  "updateTime": "2026/5/24 21:43:23",
   "dataSource": "新浪财经 + FactorEngine因子分析 + DeepSeek V4 AI",
   "disclaimer": "本推荐仅供参考，不构成投资建议。股市有风险，投资需谨慎。",
   "factorSummary": {
