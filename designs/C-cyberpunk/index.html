@@ -1,0 +1,515 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>STOCK_SIGNAL // 每日A股</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Orbitron:wght@400;500;700;900&family=Rajdhani:wght@300;400;500;600;700&family=Noto+Sans+SC:wght@300;400;500;700&display=swap" rel="stylesheet">
+<style>
+*,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
+:root{
+  --bg:#050510;
+  --bg-deep:#0a0a1a;
+  --card-bg:rgba(15,15,40,0.6);
+  --card-border:rgba(100,200,255,0.1);
+  --card-border-hover:rgba(100,200,255,0.3);
+  --neon-cyan:#00f0ff;
+  --neon-magenta:#ff00aa;
+  --neon-green:#00ff88;
+  --neon-amber:#ffaa00;
+  --neon-red:#ff3355;
+  --text:#c8d6e5;
+  --text-dim:#576574;
+  --font-display:'Orbitron',sans-serif;
+  --font-data:'Rajdhani',sans-serif;
+  --font-ui:'Noto Sans SC',sans-serif;
+}
+html{scroll-behavior:smooth}
+body{
+  font-family:var(--font-ui);
+  background:var(--bg);
+  color:var(--text);
+  min-height:100vh;
+  overflow-x:hidden;
+}
+
+/* === ANIMATED BACKGROUND === */
+body::before{
+  content:'';position:fixed;top:0;left:0;right:0;bottom:0;
+  background:
+    repeating-linear-gradient(0deg,transparent,transparent 2px,rgba(0,240,255,0.008) 2px,rgba(0,240,255,0.008) 4px),
+    radial-gradient(ellipse at 20% 50%,rgba(0,240,255,0.04) 0%,transparent 60%),
+    radial-gradient(ellipse at 80% 20%,rgba(255,0,170,0.03) 0%,transparent 60%);
+  pointer-events:none;z-index:0;
+}
+
+/* === SCAN LINE === */
+body::after{
+  content:'';position:fixed;top:0;left:0;right:0;bottom:0;
+  background:linear-gradient(transparent 50%,rgba(0,0,0,0.03) 50%);
+  background-size:100% 4px;
+  pointer-events:none;z-index:1;
+}
+
+.container{max-width:1100px;margin:0 auto;padding:0 24px;position:relative;z-index:2}
+
+/* === TOP BAR === */
+.top-bar{
+  padding:16px 0;
+  border-bottom:1px solid var(--card-border);
+  background:rgba(5,5,16,0.8);
+  backdrop-filter:blur(20px);
+  position:sticky;top:0;z-index:100;
+}
+.top-bar-inner{
+  display:flex;justify-content:space-between;align-items:center;flex-wrap:wrap;gap:12px;
+}
+.logo-group{display:flex;align-items:center;gap:16px}
+.logo-mark{
+  width:36px;height:36px;
+  border:2px solid var(--neon-cyan);
+  border-radius:8px;
+  display:flex;align-items:center;justify-content:center;
+  font-family:var(--font-display);
+  font-size:14px;
+  font-weight:900;
+  color:var(--neon-cyan);
+  text-shadow:0 0 12px rgba(0,240,255,0.5);
+  box-shadow:0 0 16px rgba(0,240,255,0.15),inset 0 0 16px rgba(0,240,255,0.05);
+  animation:logo-pulse 3s ease-in-out infinite;
+}
+@keyframes logo-pulse{
+  0%,100%{box-shadow:0 0 16px rgba(0,240,255,0.15),inset 0 0 16px rgba(0,240,255,0.05)}
+  50%{box-shadow:0 0 24px rgba(0,240,255,0.3),inset 0 0 24px rgba(0,240,255,0.1)}
+}
+.logo-text h1{
+  font-family:var(--font-display);
+  font-size:1rem;
+  font-weight:700;
+  letter-spacing:0.15em;
+  color:#fff;
+  text-transform:uppercase;
+}
+.logo-text p{
+  font-size:11px;
+  color:var(--text-dim);
+  letter-spacing:0.1em;
+  font-family:var(--font-data);
+}
+.status-group{display:flex;align-items:center;gap:16px;font-size:12px;font-family:var(--font-data)}
+.status-dot{
+  width:6px;height:6px;border-radius:50%;
+  background:var(--neon-green);
+  box-shadow:0 0 8px rgba(0,255,136,0.6);
+  animation:blink 2s ease-in-out infinite;
+}
+@keyframes blink{0%,100%{opacity:1}50%{opacity:0.3}}
+.status-group .ts{color:var(--text-dim)}
+
+/* === HERO === */
+.hero{
+  padding:56px 0 40px;
+}
+.hero-grid{
+  display:grid;
+  grid-template-columns:1fr 1fr;
+  gap:32px;
+  align-items:start;
+}
+.hero h2{
+  font-family:var(--font-display);
+  font-size:clamp(1.6rem,4vw,2.4rem);
+  font-weight:900;
+  line-height:1.3;
+  color:#fff;
+  margin-bottom:12px;
+  background:linear-gradient(135deg,#fff 0%,var(--neon-cyan) 100%);
+  -webkit-background-clip:text;
+  -webkit-text-fill-color:transparent;
+}
+.hero .sub{
+  font-size:14px;
+  color:var(--text-dim);
+  line-height:1.8;
+}
+.hero .tag-line{
+  display:flex;gap:8px;flex-wrap:wrap;margin-top:16px;
+}
+.hero .tag{
+  font-family:var(--font-data);
+  font-size:11px;
+  padding:4px 12px;
+  border-radius:3px;
+  border:1px solid;
+  letter-spacing:0.05em;
+}
+.hero .tag.cyan{border-color:rgba(0,240,255,0.3);color:var(--neon-cyan);background:rgba(0,240,255,0.05)}
+.hero .tag.magenta{border-color:rgba(255,0,170,0.3);color:var(--neon-magenta);background:rgba(255,0,170,0.05)}
+
+/* === SUMMARY CARD === */
+.summary-card{
+  background:var(--card-bg);
+  border:1px solid var(--card-border);
+  border-radius:12px;
+  padding:24px;
+  backdrop-filter:blur(10px);
+  position:relative;
+  overflow:hidden;
+}
+.summary-card::before{
+  content:'';position:absolute;top:0;left:0;right:0;height:2px;
+  background:linear-gradient(90deg,transparent,var(--neon-cyan),transparent);
+}
+.summary-card .label{
+  font-family:var(--font-display);
+  font-size:10px;
+  letter-spacing:0.2em;
+  text-transform:uppercase;
+  color:var(--neon-cyan);
+  margin-bottom:12px;
+}
+.summary-card p{
+  font-size:14px;
+  line-height:1.9;
+  color:var(--text);
+}
+
+/* === TABS === */
+.tabs-section{padding:16px 0}
+.tabs-track{
+  display:flex;gap:8px;overflow-x:auto;padding-bottom:4px;
+  scrollbar-width:none;
+}
+.tabs-track::-webkit-scrollbar{display:none}
+.tab-btn{
+  font-family:var(--font-data);
+  font-size:13px;
+  font-weight:600;
+  padding:10px 24px;
+  background:rgba(15,15,40,0.4);
+  border:1px solid var(--card-border);
+  border-radius:8px;
+  color:var(--text-dim);
+  cursor:pointer;
+  white-space:nowrap;
+  transition:all 0.3s;
+  letter-spacing:0.03em;
+  text-transform:uppercase;
+}
+.tab-btn:hover{
+  border-color:var(--card-border-hover);
+  color:var(--text);
+}
+.tab-btn.active{
+  background:rgba(0,240,255,0.08);
+  border-color:var(--neon-cyan);
+  color:var(--neon-cyan);
+  text-shadow:0 0 12px rgba(0,240,255,0.3);
+  box-shadow:0 0 20px rgba(0,240,255,0.1);
+}
+
+/* === STOCK GRID === */
+.stocks-section{padding:16px 0 48px}
+.cat-head{margin-bottom:24px}
+.cat-head h2{
+  font-family:var(--font-display);
+  font-size:1.3rem;
+  font-weight:700;
+  color:#fff;
+  margin-bottom:6px;
+  letter-spacing:0.05em;
+}
+.cat-head p{font-size:13px;color:var(--text-dim)}
+
+.stock-grid{
+  display:grid;
+  gap:12px;
+}
+.stock-card{
+  background:var(--card-bg);
+  border:1px solid var(--card-border);
+  border-radius:10px;
+  padding:20px 24px;
+  backdrop-filter:blur(10px);
+  transition:all 0.3s;
+  position:relative;
+  overflow:hidden;
+}
+.stock-card::before{
+  content:'';position:absolute;top:0;left:0;width:3px;height:100%;
+  border-radius:3px;
+}
+.stock-card.glow-up::before{
+  background:var(--neon-red);
+  box-shadow:0 0 12px rgba(255,51,85,0.4);
+}
+.stock-card.glow-down::before{
+  background:var(--neon-green);
+  box-shadow:0 0 12px rgba(0,255,136,0.4);
+}
+.stock-card.glow-flat::before{
+  background:var(--text-dim);
+}
+.stock-card:hover{
+  border-color:var(--card-border-hover);
+  transform:translateY(-2px);
+  box-shadow:0 8px 32px rgba(0,0,0,0.3);
+}
+.stock-row{
+  display:flex;justify-content:space-between;align-items:center;gap:16px;
+}
+.stock-id{display:flex;align-items:center;gap:12px}
+.stock-id .code{
+  font-family:var(--font-data);
+  font-size:12px;
+  color:var(--text-dim);
+  letter-spacing:0.1em;
+  background:rgba(255,255,255,0.03);
+  padding:2px 8px;
+  border-radius:3px;
+}
+.stock-id .name{
+  font-family:var(--font-ui);
+  font-size:1rem;
+  font-weight:700;
+  color:#fff;
+}
+.stock-metrics{display:flex;align-items:center;gap:20px}
+.stock-metrics .price{
+  font-family:var(--font-data);
+  font-size:1.3rem;
+  font-weight:700;
+  color:#fff;
+}
+.stock-metrics .change{
+  font-family:var(--font-data);
+  font-size:14px;
+  font-weight:600;
+  padding:3px 10px;
+  border-radius:4px;
+}
+.stock-metrics .change.up{
+  color:var(--neon-red);
+  background:rgba(255,51,85,0.1);
+  text-shadow:0 0 8px rgba(255,51,85,0.3);
+}
+.stock-metrics .change.down{
+  color:var(--neon-green);
+  background:rgba(0,255,136,0.1);
+  text-shadow:0 0 8px rgba(0,255,136,0.3);
+}
+.stock-metrics .change.flat{color:var(--text-dim)}
+.stock-reason{
+  margin-top:12px;
+  padding-top:12px;
+  border-top:1px solid rgba(255,255,255,0.04);
+  font-size:13px;
+  color:var(--text-dim);
+  line-height:1.7;
+}
+.stock-reason::before{
+  content:'▸ ';
+  color:var(--neon-cyan);
+  opacity:0.6;
+}
+
+/* === EMPTY === */
+.empty{
+  text-align:center;
+  padding:60px;
+  color:var(--text-dim);
+  font-family:var(--font-data);
+  font-size:14px;
+  letter-spacing:0.1em;
+}
+
+/* === RISK === */
+.risk-section{padding:0 0 32px}
+.risk-box{
+  background:rgba(255,170,0,0.04);
+  border:1px solid rgba(255,170,0,0.15);
+  border-radius:8px;
+  padding:14px 20px;
+  font-size:12px;
+  color:var(--neon-amber);
+  display:flex;
+  align-items:center;
+  gap:10px;
+  letter-spacing:0.02em;
+}
+.risk-box::before{content:'⚠';font-size:14px}
+
+/* === FOOTER === */
+.footer{
+  border-top:1px solid var(--card-border);
+  padding:24px 0;
+  font-size:11px;
+  color:var(--text-dim);
+  display:flex;
+  justify-content:space-between;
+  flex-wrap:wrap;
+  gap:8px;
+  font-family:var(--font-data);
+  letter-spacing:0.08em;
+  text-transform:uppercase;
+}
+
+@media(max-width:768px){
+  .hero-grid{grid-template-columns:1fr}
+  .stock-row{flex-direction:column;align-items:flex-start;gap:8px}
+  .stock-metrics{gap:12px}
+  .top-bar-inner{flex-direction:column;align-items:flex-start}
+  .container{padding:0 16px}
+}
+</style>
+</head>
+<body>
+
+<!-- Top Bar -->
+<div class="top-bar">
+  <div class="container">
+    <div class="top-bar-inner">
+      <div class="logo-group">
+        <div class="logo-mark">SS</div>
+        <div class="logo-text">
+          <h1>STOCK_SIGNAL</h1>
+          <p id="sourceText">--</p>
+        </div>
+      </div>
+      <div class="status-group">
+        <div class="status-dot"></div>
+        <span class="ts" id="tsText">--</span>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- Hero -->
+<section class="hero">
+  <div class="container">
+    <div class="hero-grid">
+      <div>
+        <h2>AI 驱动的<br>每日潜力信号</h2>
+        <div class="tag-line" id="tagLine"></div>
+      </div>
+      <div class="summary-card">
+        <div class="label">// MARKET INTELLIGENCE</div>
+        <p id="summary">加载中...</p>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- Tabs -->
+<section class="tabs-section">
+  <div class="container">
+    <div class="tabs-track" id="tabs"></div>
+  </div>
+</section>
+
+<!-- Stocks -->
+<section class="stocks-section">
+  <div class="container">
+    <div class="cat-head">
+      <h2 id="catTitle">--</h2>
+      <p id="catDesc">--</p>
+    </div>
+    <div class="stock-grid" id="grid"></div>
+  </div>
+</section>
+
+<!-- Risk -->
+<section class="risk-section">
+  <div class="container">
+    <div class="risk-box" id="risk">加载中...</div>
+  </div>
+</section>
+
+<!-- Footer -->
+<footer class="footer">
+  <div class="container" style="width:100%;display:flex;justify-content:space-between;flex-wrap:wrap">
+    <span id="footSource">--</span>
+    <span>NOT INVESTMENT ADVICE</span>
+  </div>
+</footer>
+
+<script>
+(function(){
+  let D=null, idx=0;
+
+  async function load(){
+    try{
+      const r=await fetch('../data/recommendations.json',{cache:'no-cache'});
+      if(!r.ok)throw r.status;
+      D=await r.json();
+      render();
+    }catch(e){
+      document.getElementById('grid').innerHTML='<div class="empty">// SIGNAL LOST - DATA UNAVAILABLE</div>';
+    }
+  }
+
+  function render(){
+    if(!D)return;
+    document.getElementById('sourceText').textContent=D.dataSource||'';
+    document.getElementById('tsText').textContent=D.updateTime||'';
+    document.getElementById('summary').textContent=D.marketSummary||'';
+    document.getElementById('risk').textContent=D.riskWarning||'';
+    document.getElementById('footSource').textContent=D.dataSource||'';
+
+    // Tags
+    const cats=D.categories||[];
+    document.getElementById('tagLine').innerHTML=cats.map(c=>
+      `<span class="tag cyan">${c.icon||''} ${c.name}</span>`
+    ).join('');
+
+    // Tabs
+    const tabs=document.getElementById('tabs');
+    tabs.innerHTML=cats.map((c,i)=>
+      `<button class="tab-btn${i===idx?' active':''}" data-i="${i}">
+        ${c.icon||''} ${c.name} (${c.stocks.length})
+      </button>`
+    ).join('');
+    tabs.querySelectorAll('.tab-btn').forEach(b=>{
+      b.addEventListener('click',function(){
+        idx=parseInt(this.dataset.i);
+        render();
+      });
+    });
+
+    // Category
+    const cat=cats[idx]||cats[0];
+    document.getElementById('catTitle').textContent=cat.icon+' '+cat.name;
+    document.getElementById('catDesc').textContent=cat.description||'';
+
+    const stocks=cat.stocks||[];
+    if(!stocks.length){
+      document.getElementById('grid').innerHTML='<div class="empty">// NO SIGNALS IN THIS SECTOR</div>';
+      return;
+    }
+
+    const grid=document.getElementById('grid');
+    grid.innerHTML=stocks.map(s=>{
+      const cls=s.change>0?'glow-up':s.change<0?'glow-down':'glow-flat';
+      const sign=s.change>0?'+':'';
+      return `<div class="stock-card ${cls}">
+        <div class="stock-row">
+          <div class="stock-id">
+            <span class="code">${s.code}</span>
+            <span class="name">${s.name}</span>
+          </div>
+          <div class="stock-metrics">
+            <span class="price">¥${s.price.toFixed(2)}</span>
+            <span class="change ${cls.replace('glow-','')}">${sign}${s.change.toFixed(2)}%</span>
+          </div>
+        </div>
+        <div class="stock-reason">${s.reason}</div>
+      </div>`;
+    }).join('');
+  }
+
+  load();
+})();
+</script>
+</body>
+</html>
