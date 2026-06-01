@@ -1,69 +1,69 @@
 {
-  "marketSummary": "今日市场普涨，电力、消费、科技板块表现活跃，多只股票涨停。",
+  "marketSummary": "今日市场整体上涨，涨停个股众多，热点集中在科技与新能源板块，资金活跃度较高。",
   "categories": [
     {
       "name": "低估值精选",
       "icon": "📊",
-      "description": "聚焦估值因子得分高、PE较低且基本面稳健的个股。",
+      "description": "基于估值因子与综合因子，筛选PE较低、估值因子得分高的个股，具备安全边际。",
       "stocks": [
+        {
+          "code": "002081",
+          "name": "金 螳 螂",
+          "price": 6.78,
+          "change": 10.065,
+          "reason": "PE 40.58，估值因子0.603，综合因子0.377，低估值且基本面稳健。",
+          "factors": {
+            "valuation": 0.603,
+            "momentum": 0.164,
+            "volatility": 0.7136,
+            "volume": 0.4337,
+            "capital": 0,
+            "composite": 0.3773
+          }
+        },
+        {
+          "code": "002637",
+          "name": "赞宇科技",
+          "price": 11.94,
+          "change": 10.046,
+          "reason": "PE 29.85，估值因子0.647，综合因子0.370，估值优势明显。",
+          "factors": {
+            "valuation": 0.6472,
+            "momentum": 0.1668,
+            "volatility": 0.7839,
+            "volume": 0.2855,
+            "capital": 0,
+            "composite": 0.3699
+          }
+        },
         {
           "code": "600011",
           "name": "华能国际",
-          "price": 8.87,
-          "change": 10.05,
-          "reason": "PE 11.99，估值因子0.6854，综合因子0.299，低估值电力龙头，动量适中。",
+          "price": 9.76,
+          "change": 10.034,
+          "reason": "PE 13.19，估值因子0.662，综合因子0.357，低估值蓝筹。",
           "factors": {
-            "valuation": 0.6854,
-            "momentum": 0.0438,
-            "volatility": 0.2915,
-            "volume": 0.376,
+            "valuation": 0.6623,
+            "momentum": 0.1686,
+            "volatility": 0.402,
+            "volume": 0.4845,
             "capital": 0,
-            "composite": 0.299
+            "composite": 0.3565
           }
         },
         {
-          "code": "002608",
-          "name": "江苏国信",
-          "price": 9.2,
-          "change": 10.048,
-          "reason": "PE 10.03，估值因子0.7719，综合因子0.2942，低估值且波动因子0.392，相对稳健。",
+          "code": "603808",
+          "name": "歌力思",
+          "price": 9.98,
+          "change": 10.033,
+          "reason": "PE 22.18，估值因子0.694，综合因子0.330，低估且动量适中。",
           "factors": {
-            "valuation": 0.7719,
-            "momentum": 0.0439,
-            "volatility": 0.392,
-            "volume": 0.1684,
+            "valuation": 0.6935,
+            "momentum": 0.1688,
+            "volatility": 0.4271,
+            "volume": 0.2916,
             "capital": 0,
-            "composite": 0.2942
-          }
-        },
-        {
-          "code": "601702",
-          "name": "华峰铝业",
-          "price": 20.57,
-          "change": 10,
-          "reason": "PE 17.14，估值因子0.601，综合因子0.2761，低估值有色股，量价配合良好。",
-          "factors": {
-            "valuation": 0.601,
-            "momentum": 0.0458,
-            "volatility": 0.3367,
-            "volume": 0.3308,
-            "capital": 0,
-            "composite": 0.2761
-          }
-        },
-        {
-          "code": "601918",
-          "name": "新集能源",
-          "price": 10.25,
-          "change": 7.33,
-          "reason": "PE 12.42，估值因子0.7156，综合因子0.3819，低估值煤炭股，动量因子0.3308，趋势向好。",
-          "factors": {
-            "valuation": 0.7156,
-            "momentum": 0.3308,
-            "volatility": 0.407,
-            "volume": 0.379,
-            "capital": 0,
-            "composite": 0.3819
+            "composite": 0.3295
           }
         }
       ]
@@ -71,66 +71,66 @@
     {
       "name": "热点板块",
       "icon": "🔥",
-      "description": "选取今日涨幅领先、资金流入明显且综合因子较高的个股。",
+      "description": "聚焦今日涨幅领先板块，结合动量与综合因子，选择具备持续性的个股。",
       "stocks": [
         {
-          "code": "601991",
-          "name": "大唐发电",
-          "price": 8.63,
-          "change": 7.875,
-          "reason": "综合因子0.3006，估值因子0.4774，动量因子0.2356，量价因子0.5237，电力板块热点。",
+          "code": "603341",
+          "name": "龙旗科技",
+          "price": 37.91,
+          "change": 10.012,
+          "reason": "综合因子0.397，动量因子0.172，换手率5.15%，量价配合良好。",
           "factors": {
-            "valuation": 0.4774,
-            "momentum": 0.2356,
-            "volatility": 0.196,
-            "volume": 0.5237,
-            "capital": 0,
-            "composite": 0.3006
-          }
-        },
-        {
-          "code": "002081",
-          "name": "金螳螂",
-          "price": 6.16,
-          "change": 10,
-          "reason": "综合因子0.3269，估值因子0.603，波动因子0.3417，量价因子0.5784，装修装饰龙头。",
-          "factors": {
-            "valuation": 0.603,
-            "momentum": 0.0458,
-            "volatility": 0.3417,
-            "volume": 0.5784,
-            "capital": 0,
-            "composite": 0.3269
-          }
-        },
-        {
-          "code": "601888",
-          "name": "中国中免",
-          "price": 59.58,
-          "change": 8.802,
-          "reason": "综合因子0.3263，估值因子0.5528，动量因子0.1227，免税龙头，资金关注度高。",
-          "factors": {
-            "valuation": 0.5528,
-            "momentum": 0.1227,
-            "volatility": 0.4724,
-            "volume": 0.4634,
-            "capital": 0,
-            "composite": 0.3263
-          }
-        },
-        {
-          "code": "000539",
-          "name": "粤电力Ａ",
-          "price": 8.88,
-          "change": 10.037,
-          "reason": "综合因子0.3372，估值因子0.4422，波动因子0.9347，电力板块强势股，走势稳健。",
-          "factors": {
-            "valuation": 0.4422,
-            "momentum": 0.0443,
+            "valuation": 0.5698,
+            "momentum": 0.1719,
             "volatility": 0.9347,
-            "volume": 0.388,
+            "volume": 0.4001,
             "capital": 0,
-            "composite": 0.3372
+            "composite": 0.3971
+          }
+        },
+        {
+          "code": "002580",
+          "name": "圣阳股份",
+          "price": 26.71,
+          "change": 10.008,
+          "reason": "综合因子0.339，动量因子0.173，换手率12.25%，资金关注度高。",
+          "factors": {
+            "valuation": 0.3106,
+            "momentum": 0.1726,
+            "volatility": 0.7186,
+            "volume": 0.5935,
+            "capital": 0,
+            "composite": 0.3386
+          }
+        },
+        {
+          "code": "000681",
+          "name": "视觉中国",
+          "price": 22.65,
+          "change": 10.005,
+          "reason": "综合因子0.334，动量因子0.173，波动因子0.940，稳健上攻。",
+          "factors": {
+            "valuation": 0.2332,
+            "momentum": 0.173,
+            "volatility": 0.9397,
+            "volume": 0.5026,
+            "capital": 0,
+            "composite": 0.3344
+          }
+        },
+        {
+          "code": "002279",
+          "name": "久其软件",
+          "price": 7.32,
+          "change": 10.075,
+          "reason": "综合因子0.334，动量因子0.163，换手率8.74%，量价齐升。",
+          "factors": {
+            "valuation": 0.2533,
+            "momentum": 0.1625,
+            "volatility": 0.804,
+            "volume": 0.5901,
+            "capital": 0,
+            "composite": 0.3344
           }
         }
       ]
@@ -138,51 +138,66 @@
     {
       "name": "新闻驱动",
       "icon": "📰",
-      "description": "暂无明确新闻，依据因子选择动量与资金配合较好的个股。",
+      "description": "结合今日市场新闻，选择有潜在利好驱动的个股，关注资金流入信号。",
       "stocks": [
         {
-          "code": "002457",
-          "name": "青龙管业",
-          "price": 12.25,
-          "change": 9.964,
-          "reason": "综合因子0.3951，估值因子0.602，波动因子0.9296，量价因子0.4785，管网概念股。",
+          "code": "002700",
+          "name": "万憬能源",
+          "price": 7.67,
+          "change": 10.043,
+          "reason": "综合因子0.373，资金因子0（未显示但换手率12.33%），能源板块受政策关注。",
           "factors": {
-            "valuation": 0.602,
-            "momentum": 0.0473,
-            "volatility": 0.9296,
-            "volume": 0.4785,
+            "valuation": 0.5417,
+            "momentum": 0.1673,
+            "volatility": 0.5678,
+            "volume": 0.5965,
             "capital": 0,
-            "composite": 0.3951
+            "composite": 0.3734
           }
         },
         {
-          "code": "002039",
-          "name": "黔源电力",
-          "price": 23.18,
-          "change": 9.237,
-          "reason": "综合因子0.3303，估值因子0.6352，动量因子0.0874，电力板块，估值优势明显。",
+          "code": "001210",
+          "name": "金房能源",
+          "price": 33.51,
+          "change": 10.013,
+          "reason": "综合因子0.370，估值因子0.463，能源板块热度提升。",
           "factors": {
-            "valuation": 0.6352,
-            "momentum": 0.0874,
-            "volatility": 0.3769,
-            "volume": 0.4875,
+            "valuation": 0.4633,
+            "momentum": 0.1718,
+            "volatility": 0.7688,
+            "volume": 0.5237,
             "capital": 0,
-            "composite": 0.3303
+            "composite": 0.3703
           }
         },
         {
-          "code": "600863",
-          "name": "华能蒙电",
-          "price": 7.3,
-          "change": 9.94,
-          "reason": "综合因子0.299，估值因子0.598，动量因子0.0483，量价因子0.5297，电力板块补涨。",
+          "code": "600737",
+          "name": "中粮糖业",
+          "price": 14.19,
+          "change": 10,
+          "reason": "综合因子0.357，估值因子0.563，农业板块受益于政策预期。",
           "factors": {
-            "valuation": 0.598,
-            "momentum": 0.0483,
-            "volatility": 0.2261,
-            "volume": 0.5297,
+            "valuation": 0.5628,
+            "momentum": 0.1738,
+            "volatility": 0.8593,
+            "volume": 0.2644,
             "capital": 0,
-            "composite": 0.299
+            "composite": 0.3572
+          }
+        },
+        {
+          "code": "600841",
+          "name": "动力新科",
+          "price": 7.99,
+          "change": 10.055,
+          "reason": "综合因子0.348，估值因子0.704，新能源概念驱动。",
+          "factors": {
+            "valuation": 0.7035,
+            "momentum": 0.1655,
+            "volatility": 0.7638,
+            "volume": 0.1232,
+            "capital": 0,
+            "composite": 0.3482
           }
         }
       ]
@@ -190,74 +205,89 @@
     {
       "name": "技术形态",
       "icon": "📈",
-      "description": "选取波动因子较低、量价配合良好、趋势稳定的个股。",
+      "description": "基于波动因子与动量因子，选择技术形态良好、波动适中的个股。",
       "stocks": [
         {
-          "code": "603890",
-          "name": "春秋电子",
-          "price": 24.81,
-          "change": 10.022,
-          "reason": "综合因子0.3516，估值因子0.4563，波动因子0.809，量价因子0.5358，电子板块放量突破。",
+          "code": "600798",
+          "name": "宁波海运",
+          "price": 3.81,
+          "change": 10.116,
+          "reason": "综合因子0.324，波动因子0.628，动量因子0.157，技术形态突破。",
           "factors": {
-            "valuation": 0.4563,
-            "momentum": 0.0449,
-            "volatility": 0.809,
-            "volume": 0.5358,
+            "valuation": 0.4432,
+            "momentum": 0.1566,
+            "volatility": 0.6281,
+            "volume": 0.4393,
             "capital": 0,
-            "composite": 0.3516
+            "composite": 0.3242
           }
         },
         {
-          "code": "002824",
-          "name": "和胜股份",
-          "price": 26.47,
-          "change": 10.017,
-          "reason": "综合因子0.2889，估值因子0.395，波动因子0.4774，量价因子0.5478，铝业股量价齐升。",
+          "code": "002062",
+          "name": "宏润建设",
+          "price": 8.97,
+          "change": 10.061,
+          "reason": "综合因子0.309，波动因子0.493，动量因子0.165，量价配合良好。",
           "factors": {
-            "valuation": 0.395,
-            "momentum": 0.0451,
-            "volatility": 0.4774,
-            "volume": 0.5478,
+            "valuation": 0.5427,
+            "momentum": 0.1646,
+            "volatility": 0.4925,
+            "volume": 0.3308,
             "capital": 0,
-            "composite": 0.2889
+            "composite": 0.3086
           }
         },
         {
-          "code": "002372",
-          "name": "伟星新材",
-          "price": 10.03,
-          "change": 7.734,
-          "reason": "综合因子0.3357，估值因子0.5749，波动因子0.7638，动量因子0.2581，建材股稳健上涨。",
+          "code": "601101",
+          "name": "昊华能源",
+          "price": 13.27,
+          "change": 10.033,
+          "reason": "综合因子0.302，波动因子0.367，动量因子0.169，趋势向上。",
           "factors": {
-            "valuation": 0.5749,
-            "momentum": 0.2581,
-            "volatility": 0.7638,
-            "volume": 0.1292,
+            "valuation": 0.606,
+            "momentum": 0.1688,
+            "volatility": 0.3668,
+            "volume": 0.3066,
             "capital": 0,
-            "composite": 0.3357
+            "composite": 0.3016
+          }
+        },
+        {
+          "code": "300956",
+          "name": "英力股份",
+          "price": 16.94,
+          "change": 19.972,
+          "reason": "综合因子0.306，波动因子0.990，动量因子0（今日涨停），强势突破。",
+          "factors": {
+            "valuation": 0.2985,
+            "momentum": 0,
+            "volatility": 0.9899,
+            "volume": 0.4122,
+            "capital": 0,
+            "composite": 0.3055
           }
         }
       ]
     }
   ],
-  "riskWarning": "以上推荐基于因子模型，不构成投资建议，请注意市场风险。",
-  "updateTime": "2026/5/29 19:25:32",
+  "riskWarning": "以上推荐基于模型数据，不构成投资建议，注意市场波动风险。",
+  "updateTime": "2026/6/1 21:33:51",
   "dataSource": "新浪财经 + FactorEngine因子分析 + DeepSeek V4 AI",
   "disclaimer": "本推荐仅供参考，不构成投资建议。股市有风险，投资需谨慎。",
   "factorSummary": {
-    "totalStocksScored": 140,
+    "totalStocksScored": 121,
     "topComposite": [
       {
-        "code": "002697",
-        "composite": 0.572
+        "code": "600395",
+        "composite": 0.537
       },
       {
-        "code": "000543",
-        "composite": 0.5645
+        "code": "601898",
+        "composite": 0.5337
       },
       {
-        "code": "603529",
-        "composite": 0.5477
+        "code": "002982",
+        "composite": 0.5324
       }
     ],
     "weights": {
